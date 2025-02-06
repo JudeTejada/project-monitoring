@@ -32,6 +32,10 @@ import { Loader2 } from 'lucide-react';
 export default function SignIn() {
   const [isPending, startTransition] = useTransition();
 
+  console.log(
+    process.env.NEXT_PUBLIC_VERCEL_URL,
+    'process.env.NEXT_PUBLIC_VERCEL_URL'
+  );
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
