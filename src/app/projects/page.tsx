@@ -7,13 +7,13 @@ import { Suspense } from 'react';
 import TableSkeleton from './components/TableSkeleton';
 
 export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  // const session = await auth.api.getSession({
+  //   headers: await headers()
+  // });
 
-  if (!session) {
-    return redirect('/');
-  }
+  // if (!session) {
+  //   return redirect('/');
+  // }
 
   return (
     <div className='mt-10 text-center container mx-auto w-full'>
