@@ -20,7 +20,7 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await authClient.signOut();
-    router.push('/login');
+    router.push('/sign-in');
   };
 
   const NavLinks = () => (
