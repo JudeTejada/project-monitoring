@@ -6,8 +6,11 @@ const getBaseUrl = () => {
   }
   // Check for VERCEL_URL first, then fall back to window.location.origin
   if (typeof window === 'undefined') {
-    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+    // return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+    return 'https://project-monitoring-five.vercel.app';
   }
+
+  return 'https://project-monitoring-five.vercel.app';
   return window.location.origin;
 };
 
