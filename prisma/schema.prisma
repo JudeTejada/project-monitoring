@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  email         String    @unique
+  name          String?
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("user")
+}
+
+model Project {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  activities  Activity[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Rename existing Project model to Activity
+model Activity {
+  id                    String   @id @default(cuid())
+  year                  String
+  month                 String
+  project               String
+  inclusiveDates        String
+  activityName          String
+  natureOfActivity      String
+  numberOfHours         Int
+  initiatedBy           String
+  status                String
+  remarks               String
+  partneredInstitutions String
+  beneficiary           String
+  numberOfParticipants  Int
+  movs                  String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  projectId             String
+  project_relation      Project @relation(fields: [projectId], references: [id])
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  expiresAt             DateTime?
+  password              String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
