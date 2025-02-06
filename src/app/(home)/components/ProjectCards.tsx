@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import prisma from '@/lib/prisma';
 import { Project } from '@prisma/client';
@@ -41,7 +39,6 @@ export async function ProjectCards() {
             </CardHeader>
             <CardContent>
               <p className='text-lg font-semibold text-muted-foreground'>
-                {/* @ts-expect-error */}
                 {project._count.activities} Activities
               </p>
             </CardContent>
