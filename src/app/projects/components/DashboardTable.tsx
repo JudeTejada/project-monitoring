@@ -30,6 +30,8 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import { Trash2 } from 'lucide-react';
+import { Download } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 
 type Props = {
   projects: Activity[];
@@ -123,6 +125,44 @@ export function DashboardTable({ projects }: Props) {
     });
   };
 
+  const handleExportCSV = () => {
+    const csvData = sortedProjects.map(project => ({
+      Year: project.year,
+      Month: project.month,
+      Project: project.project,
+      'Inclusive Dates': project.inclusiveDates,
+      'Activity Name': project.activityName,
+      'Nature of Activity': project.natureOfActivity,
+      'Number of Hours': project.numberOfHours,
+      'Initiated By': project.initiatedBy,
+      Status: project.status,
+      Remarks: project.remarks,
+      'Partnered Institutions': project.partneredInstitutions,
+      Beneficiary: project.beneficiary,
+      'Number of Participants': project.numberOfParticipants,
+      MOVs: project.movs
+    }));
+
+    const headers = Object.keys(csvData[0]);
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row =>
+        headers.map(header =>
+          `"${row[header as keyof typeof row]?.toString().replace(/"/g, '""') || ''}"`)
+        .join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `activities_report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div>
       <header className='flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b gap-4'>
@@ -142,7 +182,17 @@ export function DashboardTable({ projects }: Props) {
             </SelectContent>
           </Select>
           <div className='flex gap-4 w-full sm:w-auto'>
-            <AddActivityModal onActivityAdded={() => window.location.reload()} />
+            <Button
+              variant='outline'
+              onClick={handleExportCSV}
+              className='w-full sm:w-auto'
+            >
+              <Download className='h-4 w-4 mr-2' />
+              Export CSV
+            </Button>
+            <AddActivityModal
+              onActivityAdded={() => window.location.reload()}
+            />
             <input
               type='file'
               accept='.csv'
@@ -229,7 +279,12 @@ export function DashboardTable({ projects }: Props) {
                   <TableCell>{project.beneficiary}</TableCell>
                   <TableCell>{project.numberOfParticipants}</TableCell>
                   <TableCell>{project.movs}</TableCell>
-                  <TableCell>
+                  <TableCell className='flex items-center gap-x-3'>
+                    <AddActivityModal
+                      onActivityAdded={() => window.location.reload()}
+                      isEditing={true}
+                      initialData={project}
+                    />
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button

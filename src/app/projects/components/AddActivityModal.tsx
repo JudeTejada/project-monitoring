@@ -25,8 +25,8 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Project } from '@prisma/client';
-import { useState } from 'react';
+import { Activity, Project } from '@prisma/client';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -41,18 +41,25 @@ const formSchema = z.object({
   initiatedBy: z.string().min(1, 'Initiator is required'),
   status: z.string().min(1, 'Status is required'),
   remarks: z.string().min(1, 'Remarks is required'),
-  partneredInstitutions: z.string().min(1, 'Partnered institutions is required'),
+  partneredInstitutions: z
+    .string()
+    .min(1, 'Partnered institutions is required'),
   beneficiary: z.string().min(1, 'Beneficiary is required'),
-  numberOfParticipants: z.coerce.number().min(1, 'Number of participants is required'),
-  movs: z.string().min(1, 'MOVs is required'),
+  numberOfParticipants: z.coerce
+    .number()
+    .min(1, 'Number of participants is required'),
+  movs: z.string().min(1, 'MOVs is required')
 });
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Pencil } from 'lucide-react';
 
+// Add isEditing and initialData props
 type Props = {
   onActivityAdded: () => void;
+  isEditing?: boolean;
+  initialData?: Activity;
 };
-
 async function fetchProjects() {
   const response = await fetch('/api/projects');
   if (!response.ok) {
@@ -61,7 +68,11 @@ async function fetchProjects() {
   return response.json();
 }
 
-export function AddActivityModal({ onActivityAdded }: Props) {
+export function AddActivityModal({
+  onActivityAdded,
+  isEditing = false,
+  initialData
+}: Props) {
   const [open, setOpen] = useState(false);
   const [newProject, setNewProject] = useState('');
   const [showNewProjectInput, setShowNewProjectInput] = useState(false);
@@ -75,26 +86,33 @@ export function AddActivityModal({ onActivityAdded }: Props) {
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
       const finalProject = showNewProjectInput ? newProject : values.project;
-      const response = await fetch('/api/activities', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...values,
-          project: finalProject
-        })
-      });
+      const response = await fetch(
+        isEditing ? `/api/activities/${initialData?.id}` : '/api/activities',
+        {
+          method: isEditing ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ...values,
+            project: finalProject
+          })
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to add activity');
+        throw new Error(
+          isEditing ? 'Failed to update activity' : 'Failed to add activity'
+        );
       }
 
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: 'Activity added successfully'
+        title: isEditing
+          ? 'Activity updated successfully'
+          : 'Activity added successfully'
       });
       form.reset();
       setOpen(false);
@@ -103,12 +121,13 @@ export function AddActivityModal({ onActivityAdded }: Props) {
     },
     onError: () => {
       toast({
-        title: 'Failed to add activity',
+        title: isEditing
+          ? 'Failed to update activity'
+          : 'Failed to add activity',
         variant: 'destructive'
       });
     }
   });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -129,18 +148,35 @@ export function AddActivityModal({ onActivityAdded }: Props) {
     }
   });
 
+  console.log(form.getValues())
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values);
   };
 
+  // Initialize form with initial data if editing
+  useEffect(() => {
+    if (isEditing && initialData) {
+      form.reset(initialData);
+    }
+  }, [form, isEditing, initialData]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='default'>Add new activity</Button>
+        {isEditing ? (
+          <Button variant='ghost' size='icon'>
+            <Pencil className='h-4 w-4' />
+          </Button>
+        ) : (
+          <Button variant='default'>Add new activity</Button>
+        )}
       </DialogTrigger>
       <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle>Add New Activity</DialogTitle>
+          <DialogTitle>
+            {isEditing ? 'Edit Activity' : 'Add New Activity'}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
@@ -329,19 +365,7 @@ export function AddActivityModal({ onActivityAdded }: Props) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name='natureOfActivity'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nature of Activity</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
 
             <div className='grid grid-cols-2 gap-4'>
               <FormField
@@ -471,7 +495,7 @@ export function AddActivityModal({ onActivityAdded }: Props) {
               type='submit'
               disabled={mutation.isLoading}
             >
-              Add Activity
+              {isEditing ? 'Update Activity' : 'Add Activity'}
             </Button>
             {/* Existing buttons */}
           </form>

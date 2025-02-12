@@ -43,3 +43,24 @@ export async function DELETE(
     );
   }
 }
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = params.id;
+    const json = await request.json();
+
+    const updatedActivity = await prisma.activity.update({
+      where: { id },
+      data: json
+    });
+
+    return NextResponse.json(updatedActivity);
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to update activity' },
+      { status: 500 }
+    );
+  }
+}

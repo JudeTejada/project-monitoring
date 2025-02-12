@@ -54,9 +54,9 @@ export function Navbar() {
         <p className='font-medium'>{session?.user.name}</p>
         <p className='text-sm text-muted-foreground'>{session?.user.email}</p>
       </div>
-      <Button variant='ghost' onClick={handleLogout}>
+      {/* <Button variant='ghost' onClick={handleLogout}>
         Logout
-      </Button>
+      </Button> */}
     </div>
   );
 
