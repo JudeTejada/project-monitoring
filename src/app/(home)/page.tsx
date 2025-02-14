@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Navbar } from '../../components/common/Navbar';
-import { ProjectCards } from './components/ProjectCards';
+import { ProjectList } from './components/ProjectList';
 
 export default async function Home() {
   // const session = await auth.api.getSession({
@@ -15,7 +15,7 @@ export default async function Home() {
   return (
     <div className='mt-10 container mx-auto w-full'>
       <Navbar />
-      <ProjectCards />
+      <ProjectList />
     </div>
   );
 }

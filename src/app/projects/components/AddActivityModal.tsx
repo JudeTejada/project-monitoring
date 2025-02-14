@@ -53,6 +53,7 @@ const formSchema = z.object({
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
+import { UploadButton, UploadDropzone } from '@/lib/uploadthing';
 
 // Add isEditing and initialData props
 type Props = {
@@ -148,7 +149,6 @@ export function AddActivityModal({
     }
   });
 
-  console.log(form.getValues())
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values);
@@ -190,12 +190,8 @@ export function AddActivityModal({
                     <div className='space-y-2'>
                       <Select
                         onValueChange={value => {
-                          if (value === 'new') {
-                            setShowNewProjectInput(true);
-                          } else {
-                            setShowNewProjectInput(false);
-                            field.onChange(value);
-                          }
+                          setShowNewProjectInput(false);
+                          field.onChange(value);
                         }}
                         disabled={isLoading}
                       >
@@ -212,16 +208,8 @@ export function AddActivityModal({
                               {project.name}
                             </SelectItem>
                           ))}
-                          <SelectItem value='new'>+ Add new project</SelectItem>
                         </SelectContent>
                       </Select>
-                      {showNewProjectInput && (
-                        <Input
-                          placeholder='Enter new project name'
-                          value={newProject}
-                          onChange={e => setNewProject(e.target.value)}
-                        />
-                      )}
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -336,36 +324,6 @@ export function AddActivityModal({
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name='activityName'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Activity Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='inclusiveDates'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Inclusive Dates</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder='e.g., Jan 1-5, 2024' />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-
 
             <div className='grid grid-cols-2 gap-4'>
               <FormField
@@ -493,7 +451,7 @@ export function AddActivityModal({
             <Button
               className='w-full'
               type='submit'
-              disabled={mutation.isLoading}
+              disabled={mutation.isPending}
             >
               {isEditing ? 'Update Activity' : 'Add Activity'}
             </Button>

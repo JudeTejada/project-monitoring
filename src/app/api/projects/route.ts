@@ -21,9 +21,12 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { name } = await req.json();
+    const { name, image } = await req.json();
     const project = await prisma.project.create({
-      data: { name }
+      data: {
+        name,
+        image
+      }
     });
     return NextResponse.json(project);
   } catch (error) {

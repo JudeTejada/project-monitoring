@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
 import { Activity } from '@prisma/client';
-import { useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { AddActivityModal } from './AddActivityModal';
 import {
   AlertDialog,
@@ -32,22 +32,77 @@ import {
 import { Trash2 } from 'lucide-react';
 import { Download } from 'lucide-react';
 import { Pencil } from 'lucide-react';
+import { AddProjectModal } from './AddProjectModal';
 
 type Props = {
   projects: Activity[];
 };
+// Add new imports at the top
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+
 export function DashboardTable({ projects }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [sortedProjects, setSortedProjects] = useState<Activity[]>(projects);
   const [isDeleting, startTransition] = useTransition();
+  // Add new state for time filter
+  const [timeFilter, setTimeFilter] = useState<string>('all');
+
+  // Add filter function
+  const filterByTime = (projects: Activity[]) => {
+    const quarterMap = {
+      Q1: ['january', 'february', 'march'],
+      Q2: ['april', 'may', 'june'],
+      Q3: ['july', 'august', 'september'],
+      Q4: ['october', 'november', 'december'],
+      S1: ['january', 'february', 'march', 'april', 'may', 'june'],
+      S2: ['july', 'august', 'september', 'october', 'november', 'december']
+    };
+
+    switch (timeFilter) {
+      case 'Q1':
+      case 'Q2':
+      case 'Q3':
+      case 'Q4':
+      case 'S1':
+      case 'S2':
+        return projects.filter(project =>
+          quarterMap[timeFilter as keyof typeof quarterMap].includes(
+            project.month.toLowerCase().trim()
+          )
+        );
+      case 'year':
+        return projects;
+      default:
+        return projects;
+    }
+  };
+
+  useEffect(() => {
+    setSortedProjects(filterByTime(projects));
+  }, [projects, timeFilter]);
+
   const handleSort = (value: string) => {
     if (value === 'all') {
-      setSortedProjects(projects);
+      setSortedProjects(filterByTime(projects));
       return;
     }
 
     const filtered = projects.filter(project => project.project === value);
-    setSortedProjects(filtered);
+    setSortedProjects(filterByTime(filtered));
+  };
+
+  // Add handler for time filter changes
+  const handleTimeFilterChange = (value: string) => {
+    setTimeFilter(value);
+    //
   };
 
   // Get unique project names for the dropdown
@@ -147,9 +202,16 @@ export function DashboardTable({ projects }: Props) {
     const csvContent = [
       headers.join(','),
       ...csvData.map(row =>
-        headers.map(header =>
-          `"${row[header as keyof typeof row]?.toString().replace(/"/g, '""') || ''}"`)
-        .join(',')
+        headers
+          .map(
+            header =>
+              `"${
+                row[header as keyof typeof row]
+                  ?.toString()
+                  .replace(/"/g, '""') || ''
+              }"`
+          )
+          .join(',')
       )
     ].join('\n');
 
@@ -157,30 +219,87 @@ export function DashboardTable({ projects }: Props) {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `activities_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute(
+      'download',
+      `activities_report_${new Date().toISOString().split('T')[0]}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-
   return (
     <div>
       <header className='flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b gap-4'>
         <h1 className='text-xl font-semibold'>2025 Activities Monitoring</h1>
         <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto'>
-          <Select onValueChange={handleSort}>
-            <SelectTrigger className='w-full sm:w-[180px]'>
-              <SelectValue placeholder='Filter by project' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>All Projects</SelectItem>
-              {uniqueProjects.map(project => (
-                <SelectItem key={project} value={project}>
-                  {project}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className='flex gap-4'>
+            <Select onValueChange={handleSort}>
+              <SelectTrigger className='w-full sm:w-[180px]'>
+                <SelectValue placeholder='Filter by project' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='all'>All Projects</SelectItem>
+                {uniqueProjects.map(project => (
+                  <SelectItem key={project} value={project}>
+                    {project}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='outline' className='w-[180px]'>
+                  {timeFilter === 'all'
+                    ? 'Filter by Time'
+                    : timeFilter === 'year'
+                    ? 'Whole Year'
+                    : timeFilter.startsWith('S')
+                    ? `Semester ${timeFilter[1]}`
+                    : `Quarter ${timeFilter[1]}`}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Time Period</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={timeFilter}
+                  onValueChange={handleTimeFilterChange}
+                >
+                  <DropdownMenuRadioItem value='all'>
+                    All Time
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='year'>
+                    Whole Year
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Quarters</DropdownMenuLabel>
+                  <DropdownMenuRadioItem value='Q1'>
+                    Q1 (Jan-Mar)
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='Q2'>
+                    Q2 (Apr-Jun)
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='Q3'>
+                    Q3 (Jul-Sep)
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='Q4'>
+                    Q4 (Oct-Dec)
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Semesters</DropdownMenuLabel>
+                  <DropdownMenuRadioItem value='S1'>
+                    Semester 1 (Jan-Jun)
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value='S2'>
+                    Semester 2 (Jul-Dec)
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* // Update the buttons section in the header */}
           <div className='flex gap-4 w-full sm:w-auto'>
             <Button
               variant='outline'
@@ -190,6 +309,7 @@ export function DashboardTable({ projects }: Props) {
               <Download className='h-4 w-4 mr-2' />
               Export CSV
             </Button>
+
             <AddActivityModal
               onActivityAdded={() => window.location.reload()}
             />
