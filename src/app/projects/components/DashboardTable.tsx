@@ -29,9 +29,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import { Trash2 } from 'lucide-react';
-import { Download } from 'lucide-react';
-import { Pencil } from 'lucide-react';
+import { Trash2, Download, Pencil, MoreVertical } from 'lucide-react';
 import { AddProjectModal } from './AddProjectModal';
 
 type Props = {
@@ -41,12 +39,21 @@ type Props = {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { formatUrl, isValidUrl } from './util';
+// Add this to your imports at the top
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function DashboardTable({ projects }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -398,43 +405,96 @@ export function DashboardTable({ projects }: Props) {
                   <TableCell>{project.partneredInstitutions}</TableCell>
                   <TableCell>{project.beneficiary}</TableCell>
                   <TableCell>{project.numberOfParticipants}</TableCell>
-                  <TableCell>{project.movs}</TableCell>
+                  <TableCell>
+                    {isValidUrl(project.movs) ? (
+                      <a
+                        href={project.movs}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-blue-600 hover:text-blue-800 hover:underline'
+                        title={project.movs} // Show full URL on hover
+                      >
+                        {formatUrl(project.movs)}
+                      </a>
+                    ) : (
+                      project.movs
+                    )}
+                  </TableCell>
                   <TableCell className='flex items-center gap-x-3'>
-                    <AddActivityModal
-                      onActivityAdded={() => window.location.reload()}
-                      isEditing={true}
-                      initialData={project}
-                    />
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          className='hover:bg-destructive/20'
-                        >
-                          <Trash2 className='h-4 w-4 text-destructive' />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Activity</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete this activity? This
-                            action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            disabled={isDeleting}
-                            onClick={() => handleDelete(project.id)}
-                            className='bg-destructive hover:bg-destructive/90'
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant='ghost' size='icon'>
+                                  <MoreVertical className='h-4 w-4' />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align='end'>
+                                <DropdownMenuItem asChild>
+                                  <AddActivityModal
+                                    onActivityAdded={() =>
+                                      window.location.reload()
+                                    }
+                                    isEditing={true}
+                                    initialData={project}
+                                  />
+                                  {/* <div
+                                    className='flex items-center'
+                                    onClick={() => {
+                                      const modal =
+                                        document.createElement('div');
+                                      modal.click();
+                                    }}
+                                  >
+                                    <Pencil className='h-4 w-4 mr-2' />
+                                    Edit
+                                  </div> */}
+                                </DropdownMenuItem>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                      className='text-destructive'
+                                      onSelect={e => e.preventDefault()}
+                                    >
+                                      <Trash2 className='h-4 w-4 mr-2' />
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Delete Activity
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete this
+                                        activity? This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        disabled={isDeleting}
+                                        onClick={() => handleDelete(project.id)}
+                                        className='bg-destructive hover:bg-destructive/90'
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Manage activity</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </TableCell>
                 </TableRow>
               ))}

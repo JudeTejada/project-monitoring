@@ -15,13 +15,5 @@ export default async function DashboardPage() {
   //   return redirect('/');
   // }
 
-  return (
-    <div className='mt-10 text-center container mx-auto w-full'>
-      <Navbar />
-
-      <Suspense fallback={<TableSkeleton />}>
-        <DashboardView />
-      </Suspense>
-    </div>
-  );
+  return <DashboardView />;
 }

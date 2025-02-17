@@ -3,6 +3,8 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Navbar } from '../../components/common/Navbar';
 import { ProjectList } from './components/ProjectList';
+import { ProjectCardSkeleton } from './components/ProjectCardSkeleton';
+import { Suspense } from 'react';
 
 export default async function Home() {
   // const session = await auth.api.getSession({
@@ -13,9 +15,7 @@ export default async function Home() {
   //   return redirect('/sign-in');
   // }
   return (
-    <div className='mt-10 container mx-auto w-full'>
-      <Navbar />
+
       <ProjectList />
-    </div>
   );
 }

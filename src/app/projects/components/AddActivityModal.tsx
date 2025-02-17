@@ -149,7 +149,6 @@ export function AddActivityModal({
     }
   });
 
-
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values);
   };
@@ -165,8 +164,8 @@ export function AddActivityModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {isEditing ? (
-          <Button variant='ghost' size='icon'>
-            <Pencil className='h-4 w-4' />
+          <Button variant='ghost'  className='px-2'>
+            <Pencil className='h-4 w-4' /> Edit project
           </Button>
         ) : (
           <Button variant='default'>Add new activity</Button>
