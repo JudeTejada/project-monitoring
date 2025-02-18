@@ -1,11 +1,22 @@
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { Navbar } from '../../components/common/Navbar';
 import { ProjectList } from './components/ProjectList';
-import { ProjectCardSkeleton } from './components/ProjectCardSkeleton';
-import { Suspense } from 'react';
+import prisma from '@/lib/prisma';
+import { Project } from '@prisma/client';
+async function getProjects(): Promise<Project[]> {
+  const projects = await prisma.project.findMany({
+    include: {
+      _count: {
+        select: { activities: true }
+      },
+      activities: {
+        select: {
+          numberOfParticipants: true
+        }
+      }
+    }
+  });
 
+  return projects;
+}
 export default async function Home() {
   // const session = await auth.api.getSession({
   //   headers: await headers()
@@ -14,8 +25,7 @@ export default async function Home() {
   // if (!session) {
   //   return redirect('/sign-in');
   // }
-  return (
+  const projects = await getProjects();
 
-      <ProjectList />
-  );
+  return <ProjectList projects={projects} />;
 }

@@ -52,8 +52,24 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  TooltipTrigger
+} from '@/components/ui/tooltip';
+// Add this near the top of your file with other imports
+import { cn } from '@/lib/utils';
+
+// Add this helper function inside your component
+const getStatusColor = (status: string) => {
+  const statusMap: Record<string, { color: string; background: string }> = {
+    Ongoing: { color: 'text-blue-700', background: 'bg-blue-100' },
+    Completed: { color: 'text-green-700', background: 'bg-green-100' },
+    Cancelled: { color: 'text-red-700', background: 'bg-red-100' },
+    Postponed: { color: 'text-yellow-700', background: 'bg-yellow-100' },
+    Rescheduled: { color: 'text-purple-700', background: 'bg-purple-100' }
+  };
+  return (
+    statusMap[status] || { color: 'text-gray-700', background: 'bg-gray-100' }
+  );
+};
 
 export function DashboardTable({ projects }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -340,59 +356,107 @@ export function DashboardTable({ projects }: Props) {
       <div className='rounded-md border overflow-x-auto'>
         <div className='min-w-[1200px]'>
           <Table>
-            <TableHeader>
+            <TableHeader className='p-4'>
               <TableRow>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Year
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Month
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Project
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Inclusive Dates
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Activity Name
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Nature of Activity
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   No. of Hours
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Initiated By
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Status
                 </TableCell>
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
                   Remarks
                 </TableCell>
                 <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
+                  Partnered Institutions
+                </TableCell>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
+                  Beneficiary
+                </TableCell>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
+                  No. of Participants
+                </TableCell>
+                <TableCell
+                  className='bg-gray-100 align-bottom whitespace-nowrap'
+                  rowSpan={2}
+                >
+                  MOVs
+                </TableCell>
+                {/* <TableCell
                   colSpan={4}
                   className='text-center bg-blue-100 font-medium'
                 >
                   Actual Accomplishments
-                </TableCell>
+                </TableCell> */}
                 <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
                   Actions
                 </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Partnered Institutions</TableCell>
-                <TableCell>Beneficiary</TableCell>
-                <TableCell>No. of Participants</TableCell>
-                <TableCell>MOVs</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sortedProjects.map(project => (
                 <TableRow key={project.id}>
-                  <TableCell>{project.year}</TableCell>
+                  <TableCell >{project.year}</TableCell>
                   <TableCell>{project.month}</TableCell>
                   <TableCell>{project.project}</TableCell>
                   <TableCell>{project.inclusiveDates}</TableCell>
@@ -400,7 +464,17 @@ export function DashboardTable({ projects }: Props) {
                   <TableCell>{project.natureOfActivity}</TableCell>
                   <TableCell>{project.numberOfHours}</TableCell>
                   <TableCell>{project.initiatedBy}</TableCell>
-                  <TableCell>{project.status}</TableCell>
+                  <TableCell>
+                    <span
+                      className={cn(
+                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+                        getStatusColor(project.status).background,
+                        getStatusColor(project.status).color
+                      )}
+                    >
+                      {project.status}
+                    </span>
+                  </TableCell>
                   <TableCell>{project.remarks}</TableCell>
                   <TableCell>{project.partneredInstitutions}</TableCell>
                   <TableCell>{project.beneficiary}</TableCell>

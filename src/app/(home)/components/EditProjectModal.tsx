@@ -17,6 +17,7 @@ import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
+import { useUploadThing } from '@/lib/uploadthing';
 
 type Props = {
   project: Project;
@@ -30,7 +31,7 @@ export function EditProjectModal({ project, children, open, setOpen }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(project.image || null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { startUpload, isUploading } = useUploadThing('imageUploader');
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       'image/*': ['.png', '.jpeg', '.jpg', '.gif']
@@ -52,21 +53,10 @@ export function EditProjectModal({ project, children, open, setOpen }: Props) {
       let imageUrl = project.image;
 
       if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        // Upload the new image if one is selected
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload image');
+        const uploadResult = await startUpload([file]);
+        if (uploadResult && uploadResult[0]) {
+          imageUrl = uploadResult[0].url;
         }
-
-        const uploadData = await uploadResponse.json();
-        imageUrl = uploadData.url;
       }
 
       const response = await fetch(`/api/projects/${project.id}`, {

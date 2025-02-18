@@ -42,7 +42,7 @@ export function ProjectHeader({ projects }: ProjectHeaderProps) {
   };
 
   return (
-    <div className='flex justify-between items-center mb-6 mt-10'>
+    <div className='flex justify-between items-center mb-6 mt-10 gap-x-3'>
       <h3 className='text-2xl font-semibold'>
         FY 2025 Number of Conducted Activities
       </h3>

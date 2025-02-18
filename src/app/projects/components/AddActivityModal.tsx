@@ -164,7 +164,7 @@ export function AddActivityModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {isEditing ? (
-          <Button variant='ghost'  className='px-2'>
+          <Button variant='ghost' className='px-2'>
             <Pencil className='h-4 w-4' /> Edit project
           </Button>
         ) : (
@@ -383,6 +383,8 @@ export function AddActivityModal({
                         <SelectItem value='Ongoing'>Ongoing</SelectItem>
                         <SelectItem value='Completed'>Completed</SelectItem>
                         <SelectItem value='Cancelled'>Cancelled</SelectItem>
+                        <SelectItem value='Postponed'>Postponed</SelectItem>
+                        <SelectItem value='Rescheduled'>Rescheduled</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
