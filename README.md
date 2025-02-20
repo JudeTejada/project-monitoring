@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project Monitoring System
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.1.6-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-blue)](https://www.typescriptlang.org)
+[![Prisma](https://img.shields.io/badge/Prisma-6.2.1-blue)](https://www.prisma.io)
+[![React Query](https://img.shields.io/badge/React%20Query-5.66.0-ff4154)](https://tanstack.com/query)
+
+A modern web application for monitoring and managing projects, built with Next.js and TypeScript.
+
+## Features
+
+- 🚀 Built with Next.js 15 and React 19
+- 🎨 Modern UI with Tailwind CSS and Radix UI components
+- 🔒 Authentication system using better-auth
+- 📊 Data visualization with Recharts
+- 🗄️ Database management with Prisma ORM
+- 📁 File uploads with uploadthing
+- 🔄 Real-time data fetching with React Query
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+- Node.js (LTS version)
+- pnpm (Recommended) or npm
 
 ## Getting Started
 
-First, run the development server:
-
+1. Clone the repository
+2. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Set up your environment variables:
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Set up the database:
+```bash
+pnpm prisma generate
+pnpm prisma db push
+pnpm prisma db seed
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. Start the development server:
+```bash
+pnpm dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-To learn more about Next.js, take a look at the following resources:
+## Available Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+├── src/
+│   ├── app/              # Next.js app directory
+│   ├── components/       # React components
+│   ├── hooks/           # Custom React hooks
+│   ├── lib/             # Utility functions and configurations
+│   └── providers/       # React context providers
+├── prisma/              # Database schema and migrations
+└── public/              # Static assets
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment Variables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The following environment variables are required:
+
+```
+DATABASE_URL="your-database-url"
+NEXT_PUBLIC_UPLOADTHING_URL="your-uploadthing-url"
+# Add other required environment variables
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add some amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## Deployment
+
+This application can be deployed on [Vercel](https://vercel.com) with zero configuration. Simply connect your repository and deploy.
+
+For other deployment options, check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

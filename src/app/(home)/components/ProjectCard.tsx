@@ -1,4 +1,17 @@
 'use client';
+
+/**
+ * Dependencies:
+ * - Next.js 13+ (App Router)
+ * - shadcn/ui (UI Components)
+ * - Prisma (Database ORM)
+ * - TypeScript
+ * - Lucide Icons
+ *
+ * Required Environment Variables:
+ * - DATABASE_URL: PostgreSQL connection string
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EditProjectModal } from './EditProjectModal';
 import {
@@ -26,29 +39,52 @@ import { Project } from '@prisma/client';
 import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
-export function ProjectCard({ project }: { project: Project }) {
+interface ProjectCardProps {
+  project: Project; // Prisma-generated Project type
+}
+
+/**
+ * ProjectCard Component
+ *
+ * Displays a project card with activities and participants statistics.
+ * Features:
+ * - Image preview modal
+ * - Edit functionality
+ * - Delete confirmation
+ * - Hover animations
+ * - Responsive design
+ *
+ * @param {Project} project - Project data from Prisma
+ */
+export function ProjectCard({ project }: ProjectCardProps) {
+  // State for modal controls
   const [isEditing, setIsEditing] = useState(false);
   const [showImagePreview, setShowImagePreview] = useState(false);
+
+  // Calculate total participants across all activities
   const totalParticipants = project.activities.reduce(
     (sum, activity) => sum + activity.numberOfParticipants,
     0
   );
 
+  /**
+   * Handles project deletion
+   * Makes DELETE request to /api/projects endpoint
+   *
+   * @param {string} projectId - UUID of the project to delete
+   */
   const handleDelete = async (projectId: string) => {
     try {
       const response = await fetch(`/api/projects/${projectId}`, {
         method: 'DELETE'
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete project');
-      }
+      if (!response.ok) throw new Error('Failed to delete project');
 
       toast({
         title: 'Project deleted successfully'
       });
 
-      // Refresh the page to update the list
       window.location.reload();
     } catch (error) {
       toast({
@@ -61,12 +97,14 @@ export function ProjectCard({ project }: { project: Project }) {
 
   return (
     <>
+      {/* Edit Modal Component */}
       <EditProjectModal
         project={project}
         open={isEditing}
         setOpen={setIsEditing}
       />
 
+      {/* Image Preview Modal */}
       <Dialog open={showImagePreview} onOpenChange={setShowImagePreview}>
         <DialogContent className='sm:max-w-[90vw] sm:max-h-[90vh] p-0'>
           <DialogTitle>Image Preview: {project.name}</DialogTitle>
@@ -83,14 +121,18 @@ export function ProjectCard({ project }: { project: Project }) {
         </DialogContent>
       </Dialog>
 
+      {/* Main Card Component */}
       <Card
         key={project.id}
         className='flex flex-col h-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] group'
       >
+        {/* Card Header with Project Title and Actions */}
         <CardHeader className='pb-4 flex flex-row items-center justify-between'>
           <CardTitle className='text-2xl font-bold text-primary'>
             {project.name}
           </CardTitle>
+
+          {/* Actions Dropdown Menu */}
           <div className='flex items-center gap-2'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -142,14 +184,19 @@ export function ProjectCard({ project }: { project: Project }) {
             </DropdownMenu>
           </div>
         </CardHeader>
+
+        {/* Card Content with Statistics and Image */}
         <CardContent className='space-y-4'>
+          {/* Statistics Grid */}
           <div className='flex gap-6'>
+            {/* Activities Count */}
             <div className='flex-1 space-y-2 bg-primary/5 p-4 rounded-lg transition-colors group-hover:bg-primary/10'>
               <p className='text-sm font-medium text-primary/70'>Activities</p>
               <p className='text-4xl font-bold text-primary'>
                 {project._count.activities}
               </p>
             </div>
+            {/* Participants Count */}
             <div className='flex-1 space-y-2 bg-primary/5 p-4 rounded-lg transition-colors group-hover:bg-primary/10'>
               <p className='text-sm font-medium text-primary/70'>
                 Participants
@@ -159,6 +206,8 @@ export function ProjectCard({ project }: { project: Project }) {
               </p>
             </div>
           </div>
+
+          {/* Project Image with Preview Functionality */}
           <div
             className='relative w-full h-60 rounded-lg overflow-hidden shadow-sm transition-shadow group-hover:shadow-md cursor-pointer'
             onClick={() => setShowImagePreview(true)}
