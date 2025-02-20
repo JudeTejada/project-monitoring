@@ -17,8 +17,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 
-import { BarChart, DownloadIcon, LayoutGrid } from 'lucide-react';
-import { ProjectChart } from './ProjectChart';
+import { DownloadIcon, LayoutGrid } from 'lucide-react';
+import { ProjectChart } from './charts/ProjectChart';
+import { ParticipantsChart } from './charts/ParticipantsChart';
+import { ActivitiesChart } from './charts/ActivitiesChart';
 
 export function ProjectList({ projects }: { projects: Project[] }) {
   const [view, setView] = useState<'card' | 'chart'>('card');
@@ -41,21 +43,14 @@ export function ProjectList({ projects }: { projects: Project[] }) {
             <div className='bg-white p-4 rounded-lg shadow'>
               <h3 className='text-lg font-medium mb-4'>Project Distribution</h3>
               <ProjectChart projects={projects} />
-
             </div>
             <div className='bg-white p-4 rounded-lg shadow'>
-              {/* <h3 className='text-lg font-medium mb-4'>
-                Project Activities Overview
-              </h3>
-              <DonutChart
-                data={chartData}
-                category='activities'
-                index='name'
-                // valueFormatter={value => `${value} activities`}
-                className='h-80'
-                colors={['#16468F', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd']}
-                showAnimation
-              /> */}
+              <h3 className='text-lg font-medium mb-4'>Participants per Project</h3>
+              <ParticipantsChart projects={projects} />
+            </div>
+            <div className='bg-white p-4 rounded-lg shadow col-span-2'>
+              <h3 className='text-lg font-medium mb-4'>Activities per Project</h3>
+              <ActivitiesChart projects={projects} />
             </div>
           </div>
         </div>
