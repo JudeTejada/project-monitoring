@@ -160,7 +160,7 @@ export function ProjectCard({ project }: { project: Project }) {
             </div>
           </div>
           <div
-            className='relative w-full h-40 rounded-lg overflow-hidden shadow-sm transition-shadow group-hover:shadow-md cursor-pointer'
+            className='relative w-full h-60 rounded-lg overflow-hidden shadow-sm transition-shadow group-hover:shadow-md cursor-pointer'
             onClick={() => setShowImagePreview(true)}
             role='button'
             aria-label='View full image'

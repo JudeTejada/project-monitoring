@@ -1,30 +1,57 @@
 'use client';
-import prisma from '@/lib/prisma';
 import { Project } from '@prisma/client';
-import Image from 'next/image';
 import { ProjectHeader } from './ProjectHeader';
 
 import { toast } from '@/hooks/use-toast';
 import { ProjectCard } from './ProjectCard';
 
-import { BarChart as TremorBarChart, DonutChart } from '@tremor/react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
 
 import { DownloadIcon, LayoutGrid } from 'lucide-react';
-import { ProjectChart } from './charts/ProjectChart';
-import { ParticipantsChart } from './charts/ParticipantsChart';
-import { ActivitiesChart } from './charts/ActivitiesChart';
 import { ExportableCharts } from './charts/ExportableCharts';
+import html2canvas from 'html2canvas';
 
 export function ProjectList({ projects }: { projects: Project[] }) {
   const [view, setView] = useState<'card' | 'chart'>('card');
+
+  const handleExportCards = useCallback(async () => {
+    const cardsContainer = document.getElementById('project-cards-container');
+    if (!cardsContainer) return;
+
+    try {
+      const canvas = await html2canvas(cardsContainer, {
+        scale: 2, // Increase quality
+        backgroundColor: '#ffffff'
+      });
+
+      // Convert to blob
+      canvas.toBlob(blob => {
+        if (!blob) return;
+
+        // Create download link
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = 'project-cards.png';
+        link.href = url;
+        link.click();
+
+        // Cleanup
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+
+      toast({
+        title: 'Project cards exported successfully'
+      });
+    } catch (error) {
+      console.error('Error exporting cards:', error);
+      toast({
+        title: 'Failed to export project cards',
+        description: 'An error occurred while exporting the cards.',
+        variant: 'destructive'
+      });
+    }
+  }, []);
 
   return (
     <div className='container mx-auto px-4 py-4 sm:py-6 md:px-6 lg:px-8'>
@@ -33,27 +60,26 @@ export function ProjectList({ projects }: { projects: Project[] }) {
       </div>
 
       {view === 'card' ? (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 xl:gap-8'>
-          {projects.map(project => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+        <div className='space-y-4'>
+          <Button
+            variant='outline'
+            onClick={handleExportCards}
+            className='mb-4'
+          >
+            <DownloadIcon className='h-4 w-4 mr-2' />
+            Export Cards as PNG
+          </Button>
+          <div
+            id='project-cards-container'
+            className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 xl:gap-8'
+          >
+            {projects.map(project => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
         </div>
       ) : (
         <div className='space-y-8'>
-          {/* <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-8'>
-            <div className='bg-white p-4 rounded-lg shadow'>
-              <h3 className='text-lg font-medium mb-4'>Project Distribution</h3>
-              <ProjectChart projects={projects} />
-            </div>
-            <div className='bg-white p-4 rounded-lg shadow'>
-              <h3 className='text-lg font-medium mb-4'>Participants per Project</h3>
-              <ParticipantsChart projects={projects} />
-            </div>
-            <div className='bg-white p-4 rounded-lg shadow col-span-2'>
-              <h3 className='text-lg font-medium mb-4'>Activities per Project</h3>
-              <ActivitiesChart projects={projects} />
-            </div>
-          </div> */}
           <ExportableCharts projects={projects} />
         </div>
       )}
