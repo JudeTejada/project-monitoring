@@ -23,67 +23,14 @@ import { ProjectChart } from './ProjectChart';
 export function ProjectList({ projects }: { projects: Project[] }) {
   const [view, setView] = useState<'card' | 'chart'>('card');
 
-
-
-  const handleExportChart = () => {
-    // Convert chart data to CSV
-    const csvContent =
-      'Project Name,Activities,Total Participants\n' +
-      chartData
-        .map(row => `${row.name},${row.activities},${row.participants}`)
-        .join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'project_statistics.csv';
-    link.click();
-  };
-
   return (
-    <div className='container mx-auto px-4 py-6 md:px-6 lg:px-8'>
-      <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
-        <ProjectHeader projects={projects} />
-        <div className='flex gap-2'>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='outline' size='sm'>
-                {view === 'card' ? (
-                  <>
-                    <LayoutGrid className='h-4 w-4 mr-2' />
-                    Card View
-                  </>
-                ) : (
-                  <>
-                    <BarChart className='h-4 w-4 mr-2' />
-                    Chart View
-                  </>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuItem onClick={() => setView('card')}>
-                <LayoutGrid className='h-4 w-4 mr-2' />
-                Card View
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setView('chart')}>
-                <BarChart className='h-4 w-4 mr-2' />
-                Chart View
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {view === 'chart' && (
-            <Button variant='outline' size='sm' onClick={handleExportChart}>
-              <DownloadIcon className='h-4 w-4 mr-2' />
-              Export Data
-            </Button>
-          )}
-        </div>
+    <div className='container mx-auto px-4 py-4 sm:py-6 md:px-6 lg:px-8'>
+      <div className='flex flex-col sm:flex-row justify-between items-center w-full gap-4 mb-6 sm:mb-8'>
+        <ProjectHeader projects={projects} view={view} setView={setView} />
       </div>
 
       {view === 'card' ? (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 xl:gap-8'>
           {projects.map(project => (
             <ProjectCard key={project.id} project={project} />
           ))}
