@@ -252,12 +252,15 @@ export function DashboardTable({ projects }: Props) {
   };
   return (
     <div>
-      <header className='flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b gap-4'>
-        <h1 className='text-xl font-semibold'>2025 Activities Monitoring</h1>
+      <header className='sticky top-0 z-10 bg-background flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b gap-4'>
+        <div>
+          <h1 className='text-2xl font-bold mb-1'>Activities Monitoring</h1>
+          <p className='text-muted-foreground'>Manage and track all project activities</p>
+        </div>
         <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto'>
-          <div className='flex gap-4'>
+          <div className='flex gap-4 p-2 rounded-lg bg-muted/30'>
             <Select onValueChange={handleSort}>
-              <SelectTrigger className='w-full sm:w-[180px]'>
+              <SelectTrigger className='w-full sm:w-[180px] bg-background'>
                 <SelectValue placeholder='Filter by project' />
               </SelectTrigger>
               <SelectContent>
@@ -272,7 +275,7 @@ export function DashboardTable({ projects }: Props) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='w-[180px]'>
+                <Button variant='outline' className='w-[180px] bg-background'>
                   {timeFilter === 'all'
                     ? 'Filter by Time'
                     : timeFilter === 'year'
@@ -322,7 +325,6 @@ export function DashboardTable({ projects }: Props) {
             </DropdownMenu>
           </div>
 
-          {/* // Update the buttons section in the header */}
           <div className='flex gap-4 w-full sm:w-auto'>
             <Button
               variant='outline'

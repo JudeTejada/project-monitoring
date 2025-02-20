@@ -5,8 +5,10 @@ export default async function DashboardView() {
   const activities = await prisma.activity.findMany();
   return (
     <>
-      <main className='contaner mx-auto w-full'>
-        <DashboardTable projects={activities} />
+      <main className='container mx-auto p-6'>
+        <div className='rounded-lg border bg-card shadow-sm'>
+          <DashboardTable projects={activities} />
+        </div>
       </main>
     </>
   );

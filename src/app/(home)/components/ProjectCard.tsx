@@ -65,9 +65,9 @@ export function ProjectCard({ project }: { project: Project }) {
         setOpen={setIsEditing}
       />
 
-      <Card key={project.id} className='flex flex-col'>
-        <CardHeader className='pb-2 flex flex-row items-center justify-between'>
-          <CardTitle className='text-2xl'>{project.name}</CardTitle>
+      <Card key={project.id} className='flex flex-col h-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] group'>
+        <CardHeader className='pb-4 flex flex-row items-center justify-between'>
+          <CardTitle className='text-2xl font-bold text-primary'>{project.name}</CardTitle>
           <div className='flex items-center gap-2'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -120,17 +120,17 @@ export function ProjectCard({ project }: { project: Project }) {
           </div>
         </CardHeader>
         <CardContent className='space-y-4'>
-          <div className='flex gap-4'>
-            <div className='flex-1 space-y-1'>
-              <p className='text-base text-muted-foreground'>Activities</p>
-              <p className='text-3xl font-bold'>{project._count.activities}</p>
+          <div className='flex gap-6'>
+            <div className='flex-1 space-y-2 bg-primary/5 p-4 rounded-lg transition-colors group-hover:bg-primary/10'>
+              <p className='text-sm font-medium text-primary/70'>Activities</p>
+              <p className='text-4xl font-bold text-primary'>{project._count.activities}</p>
             </div>
-            <div className='flex-1 space-y-1'>
-              <p className='text-base text-muted-foreground'>Participants</p>
-              <p className='text-3xl font-bold'>{totalParticipants}</p>
+            <div className='flex-1 space-y-2 bg-primary/5 p-4 rounded-lg transition-colors group-hover:bg-primary/10'>
+              <p className='text-sm font-medium text-primary/70'>Participants</p>
+              <p className='text-4xl font-bold text-primary'>{totalParticipants}</p>
             </div>
           </div>
-          <div className='relative w-full h-32 rounded-lg overflow-hidden'>
+          <div className='relative w-full h-40 rounded-lg overflow-hidden shadow-sm transition-shadow group-hover:shadow-md'>
             <Image
               src={project.image ?? 'https://picsum.photos/400/200'}
               alt={project.name}

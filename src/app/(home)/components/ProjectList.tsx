@@ -41,8 +41,8 @@ export function ProjectList({ projects }: { projects: Project[] }) {
   };
 
   return (
-    <div className='p-4 md:p-0'>
-      <div className='flex justify-between items-center mb-6 '>
+    <div className='container mx-auto px-4 py-6 md:px-6 lg:px-8'>
+      <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
         <ProjectHeader projects={projects} />
         <div className='flex gap-2'>
           <DropdownMenu>
@@ -83,14 +83,14 @@ export function ProjectList({ projects }: { projects: Project[] }) {
       </div>
 
       {view === 'card' ? (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8'>
           {projects.map(project => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       ) : (
         <div className='space-y-8'>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-8'>
             <div className='bg-white p-4 rounded-lg shadow'>
               <h3 className='text-lg font-medium mb-4'>Project Distribution</h3>
               <ProjectChart projects={projects} />
