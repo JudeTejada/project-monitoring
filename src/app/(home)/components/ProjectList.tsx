@@ -21,6 +21,7 @@ import { DownloadIcon, LayoutGrid } from 'lucide-react';
 import { ProjectChart } from './charts/ProjectChart';
 import { ParticipantsChart } from './charts/ParticipantsChart';
 import { ActivitiesChart } from './charts/ActivitiesChart';
+import { ExportableCharts } from './charts/ExportableCharts';
 
 export function ProjectList({ projects }: { projects: Project[] }) {
   const [view, setView] = useState<'card' | 'chart'>('card');
@@ -39,7 +40,7 @@ export function ProjectList({ projects }: { projects: Project[] }) {
         </div>
       ) : (
         <div className='space-y-8'>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-8'>
+          {/* <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-8'>
             <div className='bg-white p-4 rounded-lg shadow'>
               <h3 className='text-lg font-medium mb-4'>Project Distribution</h3>
               <ProjectChart projects={projects} />
@@ -52,7 +53,8 @@ export function ProjectList({ projects }: { projects: Project[] }) {
               <h3 className='text-lg font-medium mb-4'>Activities per Project</h3>
               <ActivitiesChart projects={projects} />
             </div>
-          </div>
+          </div> */}
+          <ExportableCharts projects={projects} />
         </div>
       )}
     </div>
