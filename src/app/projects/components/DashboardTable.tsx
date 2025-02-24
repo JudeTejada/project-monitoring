@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Trash2, Download, Pencil, MoreVertical } from 'lucide-react';
 import { AddProjectModal } from './AddProjectModal';
+import { EditActivityModal } from './EditActivityModal';
 
 type Props = {
   projects: Activity[];
@@ -570,6 +571,50 @@ export function DashboardTable({ projects }: Props) {
                                 <MoreVertical className='h-4 w-4' />
                               </Button>
                             </DropdownMenuTrigger>
+                            <DropdownMenuContent align='end'>
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                              >
+                                <EditActivityModal
+                                  activity={project}
+                                  onActivityUpdated={() => window.location.reload()}
+                                  trigger={
+                                    <div className='flex items-center'>
+                                      <Pencil className='h-4 w-4 mr-2' />
+                                      Edit
+                                    </div>
+                                  }
+                                />
+                              </DropdownMenuItem>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <DropdownMenuItem
+                                    onSelect={(e) => e.preventDefault()}
+                                    className='text-red-600'
+                                  >
+                                    <Trash2 className='h-4 w-4 mr-2' />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Activity</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete this activity? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDelete(project.id)}
+                                      className='bg-red-600 hover:bg-red-700'
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </DropdownMenuContent>
                           </DropdownMenu>
                         </TooltipTrigger>
                         <TooltipContent>
