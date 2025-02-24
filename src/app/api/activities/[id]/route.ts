@@ -49,11 +49,18 @@ export async function PUT(
 ) {
   try {
     const id = params.id;
-    const json = await request.json();
+    const data = await request.json();
+    const { numberOfHours, numberOfParticipants, male, female, ...activityData } = data;
 
     const updatedActivity = await prisma.activity.update({
       where: { id },
-      data: json
+      data: {
+        ...activityData,
+        numberOfHours: Number(numberOfHours),
+        numberOfParticipants: Number(numberOfParticipants),
+        male: Number(male),
+        female: Number(female)
+      }
     });
 
     return NextResponse.json(updatedActivity);

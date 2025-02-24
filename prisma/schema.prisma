@@ -46,6 +46,9 @@ model Activity {
   partneredInstitutions String
   beneficiary           String
   numberOfParticipants  Int
+  male                  Int      @default(0)
+  female                Int      @default(0)
+  component             String    @default("")
   movs                  String
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt

@@ -44,6 +44,8 @@ export async function POST(req: NextRequest) {
                 return 'initiatedBy';
               case 'Partnered Institutions':
                 return 'partneredInstitutions';
+              case 'Component':
+                return 'component';
               default:
                 return header.toLowerCase();
             }
@@ -54,9 +56,11 @@ export async function POST(req: NextRequest) {
       from_line: 2
     });
 
-    // Get unique project names from records
+    // Get unique project names from records, excluding empty strings
     const projectNames = [
-      ...new Set(records.map(record => record.project))
+      ...new Set(
+        records.map(record => record.project).filter(name => name.trim() !== '')
+      )
     ] as string[];
 
     // Create projects for each unique project name
@@ -71,30 +75,41 @@ export async function POST(req: NextRequest) {
     const createdProjects = await Promise.all(projectPromises);
     const projectMap = new Map(createdProjects.map(p => [p.name, p.id]));
 
-    // Validate and transform the data
-    const validatedRecords = records.map(record => ({
-      year: record.year || new Date().getFullYear().toString(),
-      month: record.month || '',
-      project: record.project || '',
-      inclusiveDates: record.inclusiveDates || '',
-      activityName: record.activityName || '',
-      natureOfActivity: record.natureOfActivity || '',
-      numberOfHours:
-        typeof record.numberOfHours === 'string'
-          ? parseInt(record.numberOfHours) || 0
-          : 0,
-      initiatedBy: record.initiatedBy || '',
-      status: record.status || 'PENDING',
-      remarks: record.remarks || '',
-      partneredInstitutions: record.partneredInstitutions || '',
-      beneficiary: record.beneficiary || '',
-      numberOfParticipants:
-        typeof record.numberOfParticipants === 'string'
-          ? parseInt(record.numberOfParticipants) || 0
-          : 0,
-      movs: record.movs || '',
-      projectId: projectMap.get(record.project) // Link each activity to its corresponding project
-    }));
+    // Validate and transform the data, filtering out records with missing required fields
+    const validatedRecords = records
+      .filter(record => {
+        const hasRequiredFields =
+          record.year?.trim() !== '' &&
+          record.month?.trim() !== '' &&
+          record.project?.trim() !== '';
+        return hasRequiredFields;
+      })
+      .map(record => ({
+        year: record.year || new Date().getFullYear().toString(),
+        month: record.month || '',
+        project: record.project || '',
+        inclusiveDates: record.inclusiveDates || '',
+        activityName: record.activityName || '',
+        natureOfActivity: record.natureOfActivity || '',
+        numberOfHours:
+          typeof record.numberOfHours === 'string'
+            ? parseInt(record.numberOfHours) || 0
+            : 0,
+        initiatedBy: record.initiatedBy || '',
+        status: record.status || 'PENDING',
+        remarks: record.remarks || '',
+        partneredInstitutions: record.partneredInstitutions || '',
+        beneficiary: record.beneficiary || '',
+        numberOfParticipants:
+          typeof record.numberOfParticipants === 'string'
+            ? parseInt(record.numberOfParticipants) || 0
+            : 0,
+        male: typeof record.male === 'string' ? parseInt(record.male) || 0 : 0,
+        female: typeof record.female === 'string' ? parseInt(record.female) || 0 : 0,
+        component: record.component || '',
+        movs: record.movs || '',
+        projectId: projectMap.get(record.project) // Link each activity to its corresponding project
+      }));
 
     const activities = await prisma.activity.createMany({
       data: validatedRecords

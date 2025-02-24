@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const { project: projectName, numberOfHours, numberOfParticipants, ...activityData } = data;
+    const { project: projectName, numberOfHours, numberOfParticipants, male, female, ...activityData } = data;
 
     // First, find or create the project
     let project = await prisma.project.findUnique({
@@ -27,6 +27,8 @@ export async function POST(req: Request) {
         ...activityData,
         numberOfHours: Number(numberOfHours),
         numberOfParticipants: Number(numberOfParticipants),
+        male: Number(male),
+        female: Number(female),
         project: projectName,
         projectId: project.id,
       },

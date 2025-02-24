@@ -48,6 +48,9 @@ const formSchema = z.object({
   numberOfParticipants: z.coerce
     .number()
     .min(1, 'Number of participants is required'),
+  male: z.coerce.number().min(0, 'Male count must be 0 or greater'),
+  female: z.coerce.number().min(0, 'Female count must be 0 or greater'),
+  component: z.string().min(1, 'Component is required'),
   movs: z.string().min(1, 'MOVs is required')
 });
 
@@ -145,6 +148,9 @@ export function AddActivityModal({
       partneredInstitutions: '',
       beneficiary: '',
       numberOfParticipants: 0,
+      male: 0,
+      female: 0,
+      component: '',
       movs: ''
     }
   });
@@ -429,6 +435,50 @@ export function AddActivityModal({
                   <FormLabel>Remarks</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className='grid grid-cols-2 gap-4'>
+              <FormField
+                control={form.control}
+                name='male'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Male Participants</FormLabel>
+                    <FormControl>
+                      <Input type='number' min='0' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='female'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Female Participants</FormLabel>
+                    <FormControl>
+                      <Input type='number' min='0' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name='component'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Component</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter component" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
