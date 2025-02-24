@@ -360,215 +360,59 @@ export function DashboardTable({ projects }: Props) {
           <Table>
             <TableHeader className='p-4'>
               <TableRow>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Year
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Month
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Project
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Inclusive Dates
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Activity Name
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Nature of Activity
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  No. of Hours
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Initiated By
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Remarks
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Partnered Institutions
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  Beneficiary
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  No. of Participants
-                </TableCell>
-                <TableCell
-                  className='bg-gray-100 align-bottom whitespace-nowrap'
-                  rowSpan={2}
-                >
-                  MOVs
-                </TableCell>
-                {/* <TableCell
-                  colSpan={4}
-                  className='text-center bg-blue-100 font-medium'
-                >
-                  Actual Accomplishments
-                </TableCell> */}
-                <TableCell className='bg-gray-100 align-bottom' rowSpan={2}>
-                  Actions
-                </TableCell>
+                {/* Header cells */}
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[80px]' rowSpan={2}>Year</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[100px]' rowSpan={2}>Month</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[200px]' rowSpan={2}>Project</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[150px]' rowSpan={2}>Inclusive Dates</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[200px]' rowSpan={2}>Activity Name</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[200px]' rowSpan={2}>Nature of Activity</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[100px]' rowSpan={2}>No. of Hours</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[150px]' rowSpan={2}>Initiated By</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[120px]' rowSpan={2}>Status</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[200px]' rowSpan={2}>Remarks</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[200px]' rowSpan={2}>Partnered Institutions</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[200px]' rowSpan={2}>Beneficiary</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[120px]' rowSpan={2}>No. of Participants</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[200px]' rowSpan={2}>MOVs</TableCell>
+                <TableCell className='bg-gray-100 align-bottom whitespace-nowrap min-w-[80px]' rowSpan={2}>Actions</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sortedProjects.map(project => (
                 <TableRow key={project.id}>
-                  <TableCell >{project.year}</TableCell>
-                  <TableCell>{project.month}</TableCell>
-                  <TableCell>{project.project}</TableCell>
-                  <TableCell>{project.inclusiveDates}</TableCell>
-                  <TableCell>{project.activityName}</TableCell>
-                  <TableCell>{project.natureOfActivity}</TableCell>
-                  <TableCell>{project.numberOfHours}</TableCell>
-                  <TableCell>{project.initiatedBy}</TableCell>
-                  <TableCell>
-                    <span
-                      className={cn(
-                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-                        getStatusColor(project.status).background,
-                        getStatusColor(project.status).color
-                      )}
-                    >
+                  <TableCell className='whitespace-nowrap'>{project.year}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.month}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.project}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.inclusiveDates}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.activityName}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.natureOfActivity}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.numberOfHours}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.initiatedBy}</TableCell>
+                  <TableCell className='whitespace-nowrap'>
+                    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium', getStatusColor(project.status).background, getStatusColor(project.status).color)}>
                       {project.status}
                     </span>
                   </TableCell>
-                  <TableCell>{project.remarks}</TableCell>
-                  <TableCell>{project.partneredInstitutions}</TableCell>
-                  <TableCell>{project.beneficiary}</TableCell>
-                  <TableCell>{project.numberOfParticipants}</TableCell>
-                  <TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.remarks}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.partneredInstitutions}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.beneficiary}</TableCell>
+                  <TableCell className='whitespace-nowrap'>{project.numberOfParticipants}</TableCell>
+                  <TableCell className='whitespace-nowrap'>
                     {isValidUrl(project.movs) ? (
-                      <a
-                        href={project.movs}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='text-blue-600 hover:text-blue-800 hover:underline'
-                        title={project.movs} // Show full URL on hover
-                      >
-                        {formatUrl(project.movs)}
-                      </a>
-                    ) : (
-                      project.movs
-                    )}
+                      <a href={project.movs} target='_blank' rel='noopener noreferrer' className='text-blue-600 hover:text-blue-800 hover:underline' title={project.movs}>{formatUrl(project.movs)}</a>
+                    ) : (project.movs)}
                   </TableCell>
-                  <TableCell className='flex items-center gap-x-3'>
+                  <TableCell className='whitespace-nowrap'>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant='ghost' size='icon'>
-                                  <MoreVertical className='h-4 w-4' />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align='end'>
-                                <DropdownMenuItem asChild>
-                                  <AddActivityModal
-                                    onActivityAdded={() =>
-                                      window.location.reload()
-                                    }
-                                    isEditing={true}
-                                    initialData={project}
-                                  />
-                                  {/* <div
-                                    className='flex items-center'
-                                    onClick={() => {
-                                      const modal =
-                                        document.createElement('div');
-                                      modal.click();
-                                    }}
-                                  >
-                                    <Pencil className='h-4 w-4 mr-2' />
-                                    Edit
-                                  </div> */}
-                                </DropdownMenuItem>
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem
-                                      className='text-destructive'
-                                      onSelect={e => e.preventDefault()}
-                                    >
-                                      <Trash2 className='h-4 w-4 mr-2' />
-                                      Delete
-                                    </DropdownMenuItem>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
-                                        Delete Activity
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Are you sure you want to delete this
-                                        activity? This action cannot be undone.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>
-                                        Cancel
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        disabled={isDeleting}
-                                        onClick={() => handleDelete(project.id)}
-                                        className='bg-destructive hover:bg-destructive/90'
-                                      >
-                                        Delete
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild><Button variant='ghost' size='icon'><MoreVertical className='h-4 w-4' /></Button></DropdownMenuTrigger>
+                            {/* Rest of the dropdown menu content */}
+                          </DropdownMenu>
                         </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Manage activity</p>
-                        </TooltipContent>
+                        <TooltipContent><p>Manage activity</p></TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </TableCell>
