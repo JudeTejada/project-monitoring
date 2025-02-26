@@ -1,19 +1,31 @@
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
-import DashboardView from './components/DashboardView';
-import { Navbar } from '../../components/common/Navbar';
-import { Suspense } from 'react';
-import TableSkeleton from './components/TableSkeleton';
+import { ProjectList } from './components/ProjectList';
+import prisma from '@/lib/prisma';
+import { Project } from '@prisma/client';
+async function getProjects(): Promise<Project[]> {
+  const projects = await prisma.project.findMany({
+    include: {
+      _count: {
+        select: { activities: true }
+      },
+      activities: {
+        select: {
+          numberOfParticipants: true
+        }
+      }
+    }
+  });
 
-export default async function DashboardPage() {
+  return projects;
+}
+export default async function Home() {
   // const session = await auth.api.getSession({
   //   headers: await headers()
   // });
 
   // if (!session) {
-  //   return redirect('/');
+  //   return redirect('/sign-in');
   // }
+  const projects = await getProjects();
 
-  return <DashboardView />;
+  return <ProjectList projects={projects} />;
 }

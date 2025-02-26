@@ -1,6 +1,7 @@
-import { ProjectList } from './components/ProjectList';
-import prisma from '@/lib/prisma';
 import { Project } from '@prisma/client';
+import prisma from '@/lib/prisma';
+import { BentoGrid } from './components/BentoGrid';
+
 async function getProjects(): Promise<Project[]> {
   const projects = await prisma.project.findMany({
     include: {
@@ -9,7 +10,16 @@ async function getProjects(): Promise<Project[]> {
       },
       activities: {
         select: {
-          numberOfParticipants: true
+          numberOfParticipants: true,
+          male: true,
+          female: true,
+          numberOfHours: true,
+          status: true,
+          year: true,
+          month: true,
+          activityName: true,
+          inclusiveDates: true,
+          project: true
         }
       }
     }
@@ -17,15 +27,9 @@ async function getProjects(): Promise<Project[]> {
 
   return projects;
 }
-export default async function Home() {
-  // const session = await auth.api.getSession({
-  //   headers: await headers()
-  // });
 
-  // if (!session) {
-  //   return redirect('/sign-in');
-  // }
+export default async function HomeV2() {
   const projects = await getProjects();
 
-  return <ProjectList projects={projects} />;
+  return <BentoGrid projects={projects} />;
 }

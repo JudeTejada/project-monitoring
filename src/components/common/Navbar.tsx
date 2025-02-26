@@ -10,8 +10,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  SheetTrigger
+} from '@/components/ui/sheet';
 
 export function Navbar() {
   const router = useRouter();
@@ -26,9 +26,9 @@ export function Navbar() {
   const NavLinks = () => (
     <>
       <Link
-        href='/'
+        href='/projects'
         className={`px-3 py-2 rounded-md text-sm font-medium ${
-          pathname === '/'
+          pathname === '/projects'
             ? 'bg-primary/10 text-primary'
             : 'text-muted-foreground hover:text-primary'
         }`}
@@ -36,9 +36,9 @@ export function Navbar() {
         Projects
       </Link>
       <Link
-        href='/projects'
+        href='/activities'
         className={`px-3 py-2 rounded-md text-sm font-medium ${
-          pathname === '/projects'
+          pathname === '/activities'
             ? 'bg-primary/10 text-primary'
             : 'text-muted-foreground hover:text-primary'
         }`}
@@ -79,8 +79,8 @@ export function Navbar() {
       <div className='md:hidden'>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
+            <Button variant='ghost' size='icon'>
+              <Menu className='h-6 w-6' />
             </Button>
           </SheetTrigger>
           <SheetContent>

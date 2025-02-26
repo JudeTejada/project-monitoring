@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { BarChart, Download, DownloadIcon, LayoutGrid } from 'lucide-react';
 import { Project } from '@prisma/client';
-import { AddProjectModal } from '@/app/projects/components/AddProjectModal';
+import { AddProjectModal } from '@/app/activities/components/AddProjectModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
