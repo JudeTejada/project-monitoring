@@ -63,7 +63,9 @@ export function Navbar() {
   return (
     <nav className='flex justify-between items-center p-4 border-b'>
       <div className='flex items-center gap-6'>
-        <h1 className='text-xl font-semibold'>Dashboard</h1>
+        <Link href={'/'}>
+          <h1 className='text-xl font-semibold'>Dashboard</h1>
+        </Link>
         {/* Desktop Navigation */}
         <div className='hidden md:flex items-center gap-4'>
           <NavLinks />
