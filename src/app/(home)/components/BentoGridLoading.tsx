@@ -22,6 +22,7 @@ export function BentoGridLoading() {
         </Button>
       </div>
 
+      {/* Stats Cards */}
       <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8'>
         {[...Array(3)].map((_, i) => (
           <Card
@@ -34,7 +35,9 @@ export function BentoGridLoading() {
         ))}
       </div>
 
+      {/* Activities and Distribution */}
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
+        {/* Upcoming Activities */}
         <Card className='p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300'>
           <div className='h-6 w-48 bg-gray-200 animate-pulse rounded mb-6' />
           <div className='space-y-3'>
@@ -51,17 +54,36 @@ export function BentoGridLoading() {
           </div>
         </Card>
 
-        <Card className='p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300'>
-          <div className='flex justify-between items-center mb-4'>
-            <div className='h-6 w-48 bg-gray-200 animate-pulse rounded' />
-            <div className='w-[120px] h-10 bg-gray-200 animate-pulse rounded-md' />
-          </div>
-          <div className='h-[300px] bg-gray-100 animate-pulse rounded-lg' />
-        </Card>
+        {/* Activity Distribution and Quick Stats */}
+        <div className='grid grid-cols-1 gap-6'>
+          <Card className='p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300'>
+            <div className='flex justify-between items-center mb-4'>
+              <div className='h-6 w-48 bg-gray-200 animate-pulse rounded' />
+              <div className='w-[120px] h-10 bg-gray-200 animate-pulse rounded-md' />
+            </div>
+            <div className='h-[300px] bg-gray-100 animate-pulse rounded-lg' />
+          </Card>
+
+          <Card className='p-6 bg-gradient-to-br from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-colors'>
+            <div className='h-6 w-32 bg-gray-200 animate-pulse rounded mb-6' />
+            <div className='space-y-4'>
+              {[...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className='p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow'
+                >
+                  <div className='h-4 w-40 bg-gray-200 animate-pulse rounded mb-2' />
+                  <div className='h-6 w-16 bg-gray-300 animate-pulse rounded' />
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <Card className='p-6 md:col-span-2'>
+      {/* Gender Distribution and Initiative Source */}
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <Card className='p-6'>
           <div className='h-6 w-40 bg-gray-200 animate-pulse rounded mb-6' />
           <div className='h-[300px] bg-gray-100 animate-pulse rounded-lg' />
         </Card>

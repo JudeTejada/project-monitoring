@@ -1,14 +1,15 @@
 'use client';
 
-import { Project } from '@prisma/client';
+import { Activity, Project } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
+import html2canvas from 'html2canvas';
 
 interface ReportExporterProps {
   projects: Project[];
-  filteredActivities: any[];
+  filteredActivities: Activity[];
   totalParticipants: number;
   genderDataByProject: Array<{ male: number; female: number }>;
 }
