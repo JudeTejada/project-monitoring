@@ -32,6 +32,12 @@ import {
 import { Trash2, Download, Pencil, MoreVertical } from 'lucide-react';
 import { AddProjectModal } from './AddProjectModal';
 import { EditActivityModal } from './EditActivityModal';
+import { handleExport } from './utils/exportUtils';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
 
 type Props = {
   projects: Activity[];
@@ -59,7 +65,7 @@ import {
 import { cn } from '@/lib/utils';
 
 // Add this helper function inside your component
-const getStatusColor = (status: string) => {
+export const getStatusColor = (status: string) => {
   const statusMap: Record<string, { color: string; background: string }> = {
     Ongoing: { color: 'text-blue-700', background: 'bg-blue-100' },
     Completed: { color: 'text-green-700', background: 'bg-green-100' },
@@ -78,8 +84,11 @@ export function DashboardTable({ projects }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [sortedProjects, setSortedProjects] = useState<Activity[]>(projects);
   const [isDeleting, startTransition] = useTransition();
-  // Add new state for time filter
   const [timeFilter, setTimeFilter] = useState<string>('all');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'pdf'>('csv');
+
+
 
   // Add filter function
   const filterByTime = useCallback(
@@ -211,56 +220,7 @@ export function DashboardTable({ projects }: Props) {
     });
   };
 
-  const handleExportCSV = () => {
-    const csvData = sortedProjects.map(project => ({
-      Year: project.year,
-      Month: project.month,
-      Project: project.project,
-      'Inclusive Dates': project.inclusiveDates,
-      'Activity Name': project.activityName,
-      'Nature of Activity': project.natureOfActivity,
-      'Number of Hours': project.numberOfHours,
-      'Initiated By': project.initiatedBy,
-      Status: project.status,
-      Remarks: project.remarks,
-      'Partnered Institutions': project.partneredInstitutions,
-      // Beneficiary: project.beneficiary,
-      'Number of Participants': project.numberOfParticipants,
-      Male: project.male,
-      Female: project.female,
-      Component: project.component,
-      MOVs: project.movs
-    }));
 
-    const headers = Object.keys(csvData[0]);
-    const csvContent = [
-      headers.join(','),
-      ...csvData.map(row =>
-        headers
-          .map(
-            header =>
-              `"${
-                row[header as keyof typeof row]
-                  ?.toString()
-                  .replace(/"/g, '""') || ''
-              }"`
-          )
-          .join(',')
-      )
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute(
-      'download',
-      `activities_report_${new Date().toISOString().split('T')[0]}.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
   return (
     <div>
       <header className='sticky top-0 z-10 bg-background flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b gap-4'>
@@ -339,14 +299,49 @@ export function DashboardTable({ projects }: Props) {
           </div>
 
           <div className='flex gap-4 w-full sm:w-auto'>
-            <Button
-              variant='outline'
-              onClick={handleExportCSV}
-              className='w-full sm:w-auto'
-            >
-              <Download className='h-4 w-4 mr-2' />
-              Export CSV
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant='outline' className='w-full sm:w-auto'>
+                  <Download className='h-4 w-4 mr-2' />
+                  Export
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className='w-[200px] p-4'>
+                <div className='space-y-4'>
+                  <div className='space-y-2'>
+                    <label className='text-sm font-medium'>Sort by Month</label>
+                    <Select value={sortOrder} onValueChange={setSortOrder}>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Sort order' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='asc'>Ascending</SelectItem>
+                        <SelectItem value='desc'>Descending</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className='space-y-2'>
+                    <label className='text-sm font-medium'>Format</label>
+                    <Select
+                      value={exportFormat}
+                      onValueChange={setExportFormat}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select format' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='csv'>CSV</SelectItem>
+                        <SelectItem value='excel'>Excel</SelectItem>
+                        <SelectItem value='pdf'>PDF</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button className='w-full' onClick={() => handleExport(sortedProjects, exportFormat, sortOrder)}>
+                    Export
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
 
             <AddActivityModal
               onActivityAdded={() => window.location.reload()}
@@ -573,11 +568,13 @@ export function DashboardTable({ projects }: Props) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align='end'>
                               <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
+                                onSelect={e => e.preventDefault()}
                               >
                                 <EditActivityModal
                                   activity={project}
-                                  onActivityUpdated={() => window.location.reload()}
+                                  onActivityUpdated={() =>
+                                    window.location.reload()
+                                  }
                                   trigger={
                                     <div className='flex items-center'>
                                       <Pencil className='h-4 w-4 mr-2' />
@@ -589,7 +586,7 @@ export function DashboardTable({ projects }: Props) {
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
+                                    onSelect={e => e.preventDefault()}
                                     className='text-red-600'
                                   >
                                     <Trash2 className='h-4 w-4 mr-2' />
@@ -598,13 +595,18 @@ export function DashboardTable({ projects }: Props) {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Activity</AlertDialogTitle>
+                                    <AlertDialogTitle>
+                                      Delete Activity
+                                    </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to delete this activity? This action cannot be undone.
+                                      Are you sure you want to delete this
+                                      activity? This action cannot be undone.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogCancel>
+                                      Cancel
+                                    </AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => handleDelete(project.id)}
                                       className='bg-red-600 hover:bg-red-700'
