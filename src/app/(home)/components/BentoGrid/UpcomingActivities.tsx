@@ -1,6 +1,6 @@
 'use client';
 
-import { getStatusColor } from '@/app/activities/components/DashboardTable';
+import { getStatusColor } from '@/app/activities/components/utils/status-color';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Activity } from '@prisma/client';

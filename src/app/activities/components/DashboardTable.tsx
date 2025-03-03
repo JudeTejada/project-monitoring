@@ -29,7 +29,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import { Trash2, Download, Pencil, MoreVertical } from 'lucide-react';
+import { Trash2, Download, Pencil, MoreVertical, Eye } from 'lucide-react';
 import { AddProjectModal } from './AddProjectModal';
 import { EditActivityModal } from './EditActivityModal';
 import { handleExport } from './utils/exportUtils';
@@ -54,6 +54,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { formatUrl, isValidUrl } from './util';
+import Link from 'next/link';
 // Add this to your imports at the top
 import {
   Tooltip,
@@ -63,22 +64,9 @@ import {
 } from '@/components/ui/tooltip';
 // Add this near the top of your file with other imports
 import { cn } from '@/lib/utils';
+import { getStatusColor } from './utils/status-color';
 
 // Add this helper function inside your component
-export const getStatusColor = (status: string) => {
-  const statusMap: Record<string, { color: string; background: string }> = {
-    Ongoing: { color: 'text-blue-700', background: 'bg-blue-100' },
-    Completed: { color: 'text-green-700', background: 'bg-green-100' },
-    Cancelled: { color: 'text-red-700', background: 'bg-red-100' },
-    TENTATIVE: { color: 'text-red-700', background: 'bg-red-100' },
-    PENDING: { color: 'text-red-700', background: 'bg-red-100' },
-    Postponed: { color: 'text-yellow-700', background: 'bg-yellow-100' },
-    Rescheduled: { color: 'text-purple-700', background: 'bg-purple-100' }
-  };
-  return (
-    statusMap[status] || { color: 'text-gray-700', background: 'bg-gray-100' }
-  );
-};
 
 export function DashboardTable({ projects }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -86,9 +74,9 @@ export function DashboardTable({ projects }: Props) {
   const [isDeleting, startTransition] = useTransition();
   const [timeFilter, setTimeFilter] = useState<string>('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'pdf'>('csv');
-
-
+  const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'pdf'>(
+    'csv'
+  );
 
   // Add filter function
   const filterByTime = useCallback(
@@ -220,7 +208,6 @@ export function DashboardTable({ projects }: Props) {
     });
   };
 
-
   return (
     <div>
       <header className='sticky top-0 z-10 bg-background flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b gap-4'>
@@ -336,7 +323,12 @@ export function DashboardTable({ projects }: Props) {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button className='w-full' onClick={() => handleExport(sortedProjects, exportFormat, sortOrder)}>
+                  <Button
+                    className='w-full'
+                    onClick={() =>
+                      handleExport(sortedProjects, exportFormat, sortOrder)
+                    }
+                  >
                     Export
                   </Button>
                 </div>
@@ -582,6 +574,15 @@ export function DashboardTable({ projects }: Props) {
                                     </div>
                                   }
                                 />
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/activities/${project.id}`}
+                                  className='flex items-center'
+                                >
+                                  <Eye className='h-4 w-4 mr-2' />
+                                  View Details
+                                </Link>
                               </DropdownMenuItem>
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
