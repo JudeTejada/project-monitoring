@@ -3,7 +3,9 @@ import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
@@ -29,7 +31,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import { Trash2, Download, Pencil, MoreVertical, Eye } from 'lucide-react';
+import {
+  Trash2,
+  Download,
+  Pencil,
+  MoreVertical,
+  Eye,
+  Filter
+} from 'lucide-react';
 import { AddProjectModal } from './AddProjectModal';
 import { EditActivityModal } from './EditActivityModal';
 import { handleExport } from './utils/exportUtils';
@@ -65,6 +74,14 @@ import {
 // Add this near the top of your file with other imports
 import { cn } from '@/lib/utils';
 import { getStatusColor } from './utils/status-color';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet';
+import ExportActivitiesPopover from './export-activities-popover';
 
 // Add this helper function inside your component
 
@@ -73,10 +90,6 @@ export function DashboardTable({ projects }: Props) {
   const [sortedProjects, setSortedProjects] = useState<Activity[]>(projects);
   const [isDeleting, startTransition] = useTransition();
   const [timeFilter, setTimeFilter] = useState<string>('all');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'pdf'>(
-    'csv'
-  );
 
   // Add filter function
   const filterByTime = useCallback(
@@ -209,153 +222,179 @@ export function DashboardTable({ projects }: Props) {
   };
 
   return (
-    <div>
-      <header className='sticky top-0 z-10 bg-background flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b gap-4'>
-        <div>
-          <h1 className='text-2xl font-bold mb-1'>Activities Monitoring</h1>
-          <p className='text-muted-foreground'>
-            Manage and track all project activities
-          </p>
-        </div>
-        <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto'>
-          <div className='flex gap-4 p-2 rounded-lg bg-muted/30'>
-            <Select onValueChange={handleSort}>
-              <SelectTrigger className='w-full sm:w-[180px] bg-background'>
-                <SelectValue placeholder='Filter by project' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Projects</SelectItem>
-                {uniqueProjects.map(project => (
-                  <SelectItem key={project} value={project}>
-                    {project}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='w-[180px] bg-background'>
-                  {timeFilter === 'all'
-                    ? 'Filter by Time'
-                    : timeFilter === 'year'
-                    ? 'Whole Year'
-                    : timeFilter.startsWith('S')
-                    ? `Semester ${timeFilter[1]}`
-                    : `Quarter ${timeFilter[1]}`}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Time Period</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  value={timeFilter}
-                  onValueChange={handleTimeFilterChange}
-                >
-                  <DropdownMenuRadioItem value='all'>
-                    All Time
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='year'>
-                    Whole Year
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Quarters</DropdownMenuLabel>
-                  <DropdownMenuRadioItem value='Q1'>
-                    Q1 (Jan-Mar)
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='Q2'>
-                    Q2 (Apr-Jun)
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='Q3'>
-                    Q3 (Jul-Sep)
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='Q4'>
-                    Q4 (Oct-Dec)
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Semesters</DropdownMenuLabel>
-                  <DropdownMenuRadioItem value='S1'>
-                    Semester 1 (Jan-Jun)
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value='S2'>
-                    Semester 2 (Jul-Dec)
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+    <>
+      <header className=' bg-background flex flex-col gap-2 p-2 sm:p-4 border-b'>
+        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 sm:p-6 border-b gap-3'>
+          <div>
+            <h1 className='text-xl sm:text-2xl font-bold mb-1'>
+              Activities Monitoring
+            </h1>
+            <p className='text-sm sm:text-base text-muted-foreground'>
+              Manage and track all project activities
+            </p>
           </div>
-
-          <div className='flex gap-4 w-full sm:w-auto'>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant='outline' className='w-full sm:w-auto'>
-                  <Download className='h-4 w-4 mr-2' />
-                  Export
+          <div className='flex md:items-center gap-2 flex-col md:flex-row w-full items-start justify-stretch'>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant='outline' className='md:hidden w-full'>
+                  <Filter className='h-4 w-4 mr-2' />
+                  Filters
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className='w-[200px] p-4'>
-                <div className='space-y-4'>
-                  <div className='space-y-2'>
-                    <label className='text-sm font-medium'>Sort by Month</label>
-                    <Select value={sortOrder} onValueChange={setSortOrder}>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Sort order' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='asc'>Ascending</SelectItem>
-                        <SelectItem value='desc'>Descending</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className='space-y-2'>
-                    <label className='text-sm font-medium'>Format</label>
-                    <Select
-                      value={exportFormat}
-                      onValueChange={setExportFormat}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder='Select format' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='csv'>CSV</SelectItem>
-                        <SelectItem value='excel'>Excel</SelectItem>
-                        <SelectItem value='pdf'>PDF</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button
-                    className='w-full'
-                    onClick={() =>
-                      handleExport(sortedProjects, exportFormat, sortOrder)
-                    }
-                  >
-                    Export
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+              </SheetTrigger>
+              <SheetContent side='bottom' className='h-[80vh] md:hidden'>
+                <SheetHeader>
+                  <SheetTitle>Filters & Export</SheetTitle>
+                </SheetHeader>
+                <div className='mt-6 space-y-6'>
+                  <div className='space-y-4'>
+                    <div className='space-y-2'>
+                      <label className='text-sm font-medium'>Project</label>
+                      <Select onValueChange={handleSort} className='w-full'>
+                        <SelectTrigger className='w-full bg-background'>
+                          <SelectValue placeholder='Filter by project' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='all'>All Projects</SelectItem>
+                          {uniqueProjects.map(project => (
+                            <SelectItem key={project} value={project}>
+                              {project}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-            <AddActivityModal
-              onActivityAdded={() => window.location.reload()}
-            />
-            <input
-              type='file'
-              accept='.csv'
-              onChange={handleImport}
-              ref={fileInputRef}
-              className='hidden'
-            />
-            <Button
-              variant='outline'
-              onClick={() => fileInputRef.current?.click()}
-              className='w-full sm:w-auto'
-            >
-              Import projects
-            </Button>
+                    <div className='space-y-2'>
+                      <label className='text-sm font-medium'>Time Period</label>
+                      <Select
+                        value={timeFilter}
+                        onValueChange={handleTimeFilterChange}
+                      >
+                        <SelectTrigger className='w-full bg-background'>
+                          <SelectValue placeholder='Filter by time' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='all'>All Time</SelectItem>
+                          <SelectItem value='year'>Whole Year</SelectItem>
+                          <SelectGroup>
+                            <SelectLabel>Quarters</SelectLabel>
+                            <SelectItem value='Q1'>Q1 (Jan-Mar)</SelectItem>
+                            <SelectItem value='Q2'>Q2 (Apr-Jun)</SelectItem>
+                            <SelectItem value='Q3'>Q3 (Jul-Sep)</SelectItem>
+                            <SelectItem value='Q4'>Q4 (Oct-Dec)</SelectItem>
+                          </SelectGroup>
+                          <SelectGroup>
+                            <SelectLabel>Semesters</SelectLabel>
+                            <SelectItem value='S1'>
+                              Semester 1 (Jan-Jun)
+                            </SelectItem>
+                            <SelectItem value='S2'>
+                              Semester 2 (Jul-Dec)
+                            </SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <div className='hidden md:flex items-center gap-4'>
+              <div className='flex gap-4 p-2 rounded-lg bg-muted/30'>
+                <Select onValueChange={handleSort}>
+                  <SelectTrigger className='w-[180px] bg-background'>
+                    <SelectValue placeholder='Filter by project' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='all'>All Projects</SelectItem>
+                    {uniqueProjects.map(project => (
+                      <SelectItem key={project} value={project}>
+                        {project}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant='outline'
+                      className='w-[180px] bg-background'
+                    >
+                      {timeFilter === 'all'
+                        ? 'Filter by Time'
+                        : timeFilter === 'year'
+                        ? 'Whole Year'
+                        : timeFilter.startsWith('S')
+                        ? `Semester ${timeFilter[1]}`
+                        : `Quarter ${timeFilter[1]}`}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Time Period</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuRadioGroup
+                      value={timeFilter}
+                      onValueChange={handleTimeFilterChange}
+                    >
+                      <DropdownMenuRadioItem value='all'>
+                        All Time
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value='year'>
+                        Whole Year
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Quarters</DropdownMenuLabel>
+                      <DropdownMenuRadioItem value='Q1'>
+                        Q1 (Jan-Mar)
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value='Q2'>
+                        Q2 (Apr-Jun)
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value='Q3'>
+                        Q3 (Jul-Sep)
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value='Q4'>
+                        Q4 (Oct-Dec)
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Semesters</DropdownMenuLabel>
+                      <DropdownMenuRadioItem value='S1'>
+                        Semester 1 (Jan-Jun)
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value='S2'>
+                        Semester 2 (Jul-Dec)
+                      </DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            <div className='flex gap-2 flex-col md:flex-row w-full'>
+              <ExportActivitiesPopover projects={sortedProjects} />
+              <AddActivityModal
+                onActivityAdded={() => window.location.reload()}
+              />
+              <input
+                type='file'
+                accept='.csv'
+                onChange={handleImport}
+                ref={fileInputRef}
+                className='hidden'
+              />
+              <Button
+                variant='outline'
+                onClick={() => fileInputRef.current?.click()}
+              >
+                Import
+              </Button>
+            </div>
           </div>
         </div>
       </header>
-      <div className='rounded-md border overflow-x-auto'>
+      <div className='overflow-x-auto w-full'>
         <div className='min-w-[1200px]'>
           <Table>
             <TableHeader className='p-4'>
@@ -632,6 +671,6 @@ export function DashboardTable({ projects }: Props) {
           </Table>
         </div>
       </div>
-    </div>
+    </>
   );
 }

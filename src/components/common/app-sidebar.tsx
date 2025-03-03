@@ -5,7 +5,8 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarHeader
+  SidebarHeader,
+  SidebarTrigger
 } from '@/components/ui/sidebar';
 import { useSession } from '@/lib/auth-client';
 import {
@@ -24,6 +25,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
+      <SidebarTrigger className="absolute right-4 top-4 md:hidden" />
       <SidebarHeader>
         <div className='flex items-center gap-2 px-4 py-4'>
           <Image

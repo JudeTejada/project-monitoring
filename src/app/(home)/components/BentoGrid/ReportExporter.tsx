@@ -101,8 +101,6 @@ export function ReportExporter({
     link.click();
   };
 
-
-
   const handleExport = async () => {
     const element = document.getElementById('bento-grid');
     if (!element) return;
@@ -120,20 +118,20 @@ export function ReportExporter({
   };
 
   return (
-      <div className='flex gap-4'>
-        <Button onClick={generatePDF} variant='outline'>
-          <Download className='mr-2 h-4 w-4' />
-          PDF Report
-        </Button>
-        <Button onClick={generateCSV} variant='outline'>
-          <Download className='mr-2 h-4 w-4' />
-          CSV Data
-        </Button>
+    <div className='flex gap-4 flex-col md:flex-row w-full'>
+      <Button onClick={generatePDF} variant='outline'>
+        <Download className='mr-2 h-4 w-4' />
+        PDF Report
+      </Button>
+      <Button onClick={generateCSV} variant='outline'>
+        <Download className='mr-2 h-4 w-4' />
+        CSV Data
+      </Button>
 
-        <Button onClick={handleExport} variant='outline'>
-          <Download className='mr-2 h-4 w-4' />
-          Export Dashboard
-        </Button>
-      </div>
+      <Button onClick={handleExport} variant='outline'>
+        <Download className='mr-2 h-4 w-4' />
+        Export Dashboard
+      </Button>
+    </div>
   );
 }

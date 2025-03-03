@@ -54,7 +54,7 @@ export function ProjectList({ projects }: { projects: Project[] }) {
   }, []);
 
   return (
-    <div className=' px-4 py-4 sm:py-6 md:px-6 lg:px-8'>
+    <div >
       <div className='flex flex-col sm:flex-row justify-between items-center w-full gap-4 mb-6 sm:mb-8'>
         <ProjectHeader projects={projects} view={view} setView={setView} />
       </div>

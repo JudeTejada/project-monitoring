@@ -140,11 +140,11 @@ export function BentoGrid({ projects }: BentoGridProps) {
   ];
 
   return (
-    <div className=' p-4 py-10' id='bento-grid'>
+    <div  id='bento-grid'>
       <div className='flex flex-wrap gap-4 mb-6 items-center justify-between'>
-        <div className='flex gap-4 items-center'>
+        <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full'>
           <Select value={selectedProject} onValueChange={setSelectedProject}>
-            <SelectTrigger className='w-[200px]'>
+            <SelectTrigger className='w-full sm:w-[200px]'>
               <SelectValue placeholder='Select project' />
             </SelectTrigger>
             <SelectContent>
@@ -161,21 +161,23 @@ export function BentoGrid({ projects }: BentoGridProps) {
             <PopoverTrigger asChild>
               <Button
                 variant='outline'
-                className='w-[280px] justify-start text-left font-normal'
+                className='w-full sm:w-[280px] justify-start text-left font-normal'
               >
-                <CalendarIcon className='mr-2 h-4 w-4' />
-                {dateRange?.from ? (
-                  dateRange.to ? (
-                    <>
-                      {format(dateRange.from, 'LLL dd, y')} -{' '}
-                      {format(dateRange.to, 'LLL dd, y')}
-                    </>
+                <CalendarIcon className='mr-2 h-4 w-4 flex-shrink-0' />
+                <span className='truncate'>
+                  {dateRange?.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, 'LLL dd, y')} -{' '}
+                        {format(dateRange.to, 'LLL dd, y')}
+                      </>
+                    ) : (
+                      format(dateRange.from, 'LLL dd, y')
+                    )
                   ) : (
-                    format(dateRange.from, 'LLL dd, y')
-                  )
-                ) : (
-                  <span>Pick a date range</span>
-                )}
+                    <span>Pick a date range</span>
+                  )}
+                </span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className='w-auto p-0' align='start'>
@@ -189,12 +191,25 @@ export function BentoGrid({ projects }: BentoGridProps) {
                     to: range?.to || null
                   })
                 }
+                numberOfMonths={1}
+                className='sm:hidden'
+              />
+              <Calendar
+                initialFocus
+                mode='range'
+                selected={{ from: dateRange.from, to: dateRange.to }}
+                onSelect={range =>
+                  setDateRange({
+                    from: range?.from || null,
+                    to: range?.to || null
+                  })
+                }
                 numberOfMonths={2}
+                className='hidden sm:block'
               />
             </PopoverContent>
           </Popover>
         </div>
-
         <ReportExporter
           projects={filteredProjects}
           filteredActivities={filteredActivities}

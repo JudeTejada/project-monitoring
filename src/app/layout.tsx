@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 import { QueryProvider } from '@/providers/QueryProvider';
 import { Toaster } from '@/components/ui/toaster';
 import { Sidebar } from '@/components/common/Sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/common/app-sidebar';
 
 export default function RootLayout({
@@ -24,7 +24,9 @@ export default function RootLayout({
         <QueryProvider>
           <SidebarProvider>
             <AppSidebar />
+
             <main className='w-full p-4 bg-gray-50 min-h-screen'>
+              <SidebarTrigger />
               {children}
             </main>
           </SidebarProvider>
