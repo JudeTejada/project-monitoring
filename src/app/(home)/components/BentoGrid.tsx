@@ -140,7 +140,7 @@ export function BentoGrid({ projects }: BentoGridProps) {
   ];
 
   return (
-    <div className='container mx-auto p-4 py-10' id='bento-grid'>
+    <div className=' p-4 py-10' id='bento-grid'>
       <div className='flex flex-wrap gap-4 mb-6 items-center justify-between'>
         <div className='flex gap-4 items-center'>
           <Select value={selectedProject} onValueChange={setSelectedProject}>

@@ -8,7 +8,9 @@ export const metadata: Metadata = {
 
 import { QueryProvider } from '@/providers/QueryProvider';
 import { Toaster } from '@/components/ui/toaster';
-import { Navbar } from '@/components/common/Navbar';
+import { Sidebar } from '@/components/common/Sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/common/app-sidebar';
 
 export default function RootLayout({
   children
@@ -20,10 +22,12 @@ export default function RootLayout({
       <body>
         <Toaster />
         <QueryProvider>
-          <div className='mt-10 container mx-auto w-full'>
-            <Navbar />
-            {children}
-          </div>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className='w-full p-4 bg-gray-50 min-h-screen'>
+              {children}
+            </main>
+          </SidebarProvider>
         </QueryProvider>
       </body>
     </html>
