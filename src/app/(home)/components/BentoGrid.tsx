@@ -36,6 +36,9 @@ import html2canvas from 'html2canvas';
 import { UpcomingActivities } from './BentoGrid/UpcomingActivities';
 import { StatsCards } from './BentoGrid/StatsCards';
 import { ActivityDistribution } from './BentoGrid/ActivityDistribution';
+import { PartnershipNetwork } from './BentoGrid/PartnershipNetwork';
+import { InitiativeSource } from './BentoGrid/InitiativeSource';
+import { ReportExporter } from './BentoGrid/ReportExporter';
 
 ChartJS.register(
   CategoryScale,
@@ -136,24 +139,8 @@ export function BentoGrid({ projects }: BentoGridProps) {
     'December'
   ];
 
-  const handleExport = async () => {
-    const element = document.getElementById('bento-grid');
-    if (!element) return;
-
-    try {
-      const canvas = await html2canvas(element);
-      const dataUrl = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = 'dashboard.png';
-      link.href = dataUrl;
-      link.click();
-    } catch (error) {
-      console.error('Export failed:', error);
-    }
-  };
-
   return (
-    <div className='container mx-auto p-4' id='bento-grid'>
+    <div className='container mx-auto p-4 py-10' id='bento-grid'>
       <div className='flex flex-wrap gap-4 mb-6 items-center justify-between'>
         <div className='flex gap-4 items-center'>
           <Select value={selectedProject} onValueChange={setSelectedProject}>
@@ -208,10 +195,12 @@ export function BentoGrid({ projects }: BentoGridProps) {
           </Popover>
         </div>
 
-        <Button onClick={handleExport} variant='outline'>
-          <Download className='mr-2 h-4 w-4' />
-          Export Dashboard
-        </Button>
+        <ReportExporter
+          projects={filteredProjects}
+          filteredActivities={filteredActivities}
+          totalParticipants={totalParticipants}
+          genderDataByProject={genderDataByProject}
+        />
       </div>
       <StatsCards
         totalActivities={totalActivities}
@@ -220,16 +209,54 @@ export function BentoGrid({ projects }: BentoGridProps) {
       />
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
         <UpcomingActivities activities={filteredActivities} />
-        <ActivityDistribution
-          chartType={chartType}
-          setChartType={setChartType}
-          months={months}
-          monthlyDistribution={monthlyDistribution}
-        />
+        <div className='grid grid-cols-1 gap-6'>
+          <ActivityDistribution
+            chartType={chartType}
+            setChartType={setChartType}
+            months={months}
+            monthlyDistribution={monthlyDistribution}
+          />
+
+          <Card className='p-6 bg-gradient-to-br from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-colors'>
+            <h3 className='text-lg font-semibold mb-4 text-gray-900'>
+              Quick Stats
+            </h3>
+            <div className='space-y-4'>
+              <div className='p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow'>
+                <p className='text-sm text-gray-500'>
+                  Average Activities per Project
+                </p>
+                <p className='text-xl font-semibold text-blue-700'>
+                  {(totalActivities / totalProjects).toFixed(1)}
+                </p>
+              </div>
+              <div className='p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow'>
+                <p className='text-sm text-gray-500'>
+                  Average Participants per Activity
+                </p>
+                <p className='text-xl font-semibold text-purple-700'>
+                  {(totalParticipants / totalActivities).toFixed(1)}
+                </p>
+              </div>
+              <div className='p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow'>
+                <p className='text-sm text-gray-500'>Gender Ratio (M:F)</p>
+                <p className='text-xl font-semibold text-emerald-700'>
+                  {(
+                    genderDataByProject.reduce((sum, p) => sum + p.male, 0) /
+                    (genderDataByProject.reduce(
+                      (sum, p) => sum + p.female,
+                      0
+                    ) || 1)
+                  ).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <Card className='p-6 md:col-span-2'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <Card className='p-6 '>
           <h3 className='text-lg font-semibold mb-4'>Gender Distribution</h3>
           {chartType === 'bar' && (
             <Bar
@@ -335,39 +362,7 @@ export function BentoGrid({ projects }: BentoGridProps) {
           )}
         </Card>
 
-        <Card className='p-6 bg-gradient-to-br from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-colors'>
-          <h3 className='text-lg font-semibold mb-4 text-gray-900'>
-            Quick Stats
-          </h3>
-          <div className='space-y-4'>
-            <div className='p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow'>
-              <p className='text-sm text-gray-500'>
-                Average Activities per Project
-              </p>
-              <p className='text-xl font-semibold text-blue-700'>
-                {(totalActivities / totalProjects).toFixed(1)}
-              </p>
-            </div>
-            <div className='p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow'>
-              <p className='text-sm text-gray-500'>
-                Average Participants per Activity
-              </p>
-              <p className='text-xl font-semibold text-purple-700'>
-                {(totalParticipants / totalActivities).toFixed(1)}
-              </p>
-            </div>
-            <div className='p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow'>
-              <p className='text-sm text-gray-500'>Gender Ratio (M:F)</p>
-              <p className='text-xl font-semibold text-emerald-700'>
-                {(
-                  genderDataByProject.reduce((sum, p) => sum + p.male, 0) /
-                  (genderDataByProject.reduce((sum, p) => sum + p.female, 0) ||
-                    1)
-                ).toFixed(2)}
-              </p>
-            </div>
-          </div>
-        </Card>
+        <InitiativeSource projects={filteredProjects} />
       </div>
     </div>
   );
