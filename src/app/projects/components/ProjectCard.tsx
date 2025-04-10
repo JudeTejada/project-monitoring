@@ -124,11 +124,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
       {/* Main Card Component */}
       <Card
         key={project.id}
-        className='flex flex-col h-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] group'
+        className='flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.01] group bg-gradient-to-br from-white to-gray-50/50'
       >
         {/* Card Header with Project Title and Actions */}
-        <CardHeader className='pb-4 flex flex-row items-center justify-between'>
-          <CardTitle className='text-2xl font-bold text-primary'>
+        <CardHeader className='pb-6 flex flex-row items-center justify-between border-b border-gray-100'>
+          <CardTitle className='text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent'>
             {project.name}
           </CardTitle>
 
@@ -136,25 +136,30 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <div className='flex items-center gap-2'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='ghost' size='icon'>
-                  <MoreVertical className='h-4 w-4 text-gray-800' />
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='hover:bg-gray-100/80'
+                >
+                  <MoreVertical className='h-4 w-4 text-gray-600' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
+              <DropdownMenuContent align='end' className='w-48'>
                 <DropdownMenuItem asChild>
                   <DropdownMenuItem
                     onSelect={e => {
                       setIsEditing(true);
                       e.preventDefault();
                     }}
+                    className='flex items-center gap-2 py-2 cursor-pointer'
                   >
-                    <Pencil className='h-4 w-4' /> Edit
+                    <Pencil className='h-4 w-4' /> Edit Project
                   </DropdownMenuItem>
                 </DropdownMenuItem>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <DropdownMenuItem
-                      className='text-destructive'
+                      className='text-destructive flex items-center gap-2 py-2 cursor-pointer'
                       onSelect={e => e.preventDefault()}
                     >
                       Delete Project
@@ -163,7 +168,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                      <AlertDialogDescription>
+                      <AlertDialogDescription className='text-gray-600'>
                         Are you sure you want to delete this project? This
                         action will also delete all associated activities and
                         cannot be undone.
@@ -186,22 +191,23 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </CardHeader>
 
         {/* Card Content with Statistics and Image */}
-        <CardContent className='space-y-4'>
-          {/* Statistics Grid */}
-          <div className='flex gap-6'>
-            {/* Activities Count */}
-            <div className='flex-1 space-y-2 bg-primary/5 p-4 rounded-lg transition-colors group-hover:bg-primary/10'>
-              <p className='text-sm font-medium text-primary/70'>Activities</p>
-              <p className='text-4xl font-bold text-primary'>
+        <CardContent className='space-y-6 p-6'>
+          <div className='grid grid-cols-2 gap-4'>
+            <div className='space-y-2 bg-primary/5 p-4 rounded-xl transition-colors group-hover:bg-primary/10 border border-primary/10'>
+              <p className='text-sm font-medium text-primary/70 flex items-center gap-2'>
+                <span className='w-2 h-2 rounded-full bg-primary/40'></span>
+                Activities
+              </p>
+              <p className='text-4xl font-bold text-primary tracking-tight'>
                 {project._count.activities}
               </p>
             </div>
-            {/* Participants Count */}
-            <div className='flex-1 space-y-2 bg-primary/5 p-4 rounded-lg transition-colors group-hover:bg-primary/10'>
-              <p className='text-sm font-medium text-primary/70'>
+            <div className='space-y-2 bg-primary/5 p-4 rounded-xl transition-colors group-hover:bg-primary/10 border border-primary/10'>
+              <p className='text-sm font-medium text-primary/70 flex items-center gap-2'>
+                <span className='w-2 h-2 rounded-full bg-primary/40'></span>
                 Participants
               </p>
-              <p className='text-4xl font-bold text-primary'>
+              <p className='text-4xl font-bold text-primary tracking-tight'>
                 {totalParticipants}
               </p>
             </div>
@@ -209,16 +215,17 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
           {/* Project Image with Preview Functionality */}
           <div
-            className='relative w-full h-60 rounded-lg overflow-hidden shadow-sm transition-shadow group-hover:shadow-md cursor-pointer'
+            className='relative w-full h-60 rounded-xl overflow-hidden shadow-sm transition-all duration-300 group-hover:shadow-md cursor-pointer transform group-hover:scale-[1.02]'
             onClick={() => setShowImagePreview(true)}
             role='button'
             aria-label='View full image'
           >
+            <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10'></div>
             <Image
               src={project.image ?? 'https://picsum.photos/400/200'}
               alt={project.name}
               fill
-              className='object-cover'
+              className='object-cover transition-transform duration-300 group-hover:scale-105'
               loading='lazy'
               sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
               placeholder='blur'

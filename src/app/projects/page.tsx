@@ -1,6 +1,9 @@
 import { ProjectList } from './components/ProjectList';
 import prisma from '@/lib/prisma';
 import { Project } from '@prisma/client';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 async function getProjects(): Promise<Project[]> {
   const projects = await prisma.project.findMany({
     include: {

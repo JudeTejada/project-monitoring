@@ -2,6 +2,9 @@ import { Project } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { BentoGrid } from './components/BentoGrid';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function getProjects(): Promise<Project[]> {
   const projects = await prisma.project.findMany({
     include: {
