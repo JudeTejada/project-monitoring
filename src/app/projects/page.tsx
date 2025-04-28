@@ -21,13 +21,6 @@ async function getProjects(): Promise<Project[]> {
   return projects;
 }
 export default async function Home() {
-  // const session = await auth.api.getSession({
-  //   headers: await headers()
-  // });
-
-  // if (!session) {
-  //   return redirect('/sign-in');
-  // }
   const projects = await getProjects();
 
   return <ProjectList projects={projects} />;

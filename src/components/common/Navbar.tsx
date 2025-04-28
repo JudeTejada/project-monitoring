@@ -16,7 +16,6 @@ import {
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   const handleLogout = async () => {
     await authClient.signOut();
@@ -72,11 +71,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Desktop User Info */}
-      <div className='hidden md:block'>
-        <UserInfo />
-      </div>
-
+   
       {/* Mobile Menu */}
       <div className='md:hidden'>
         <Sheet>
